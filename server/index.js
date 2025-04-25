@@ -23,7 +23,7 @@ app.use(express.json());
 // CORS 설정
 app.use(
   cors({
-    origin: "http://localhost:3000", // React 앱에서 오는 요청 허용
+    origin: "http://my-capston.kro.kr:3000", // React 앱에서 오는 요청 허용
   })
 );
 
@@ -100,7 +100,7 @@ app.get('/api/places', async (req, res) => {
 
 // 서버 실행
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://my-capston.kro.kr:${PORT}`);
   console.log('Environment check:');
   console.log('- API Key status:', GOOGLE_API_KEY ? 'Set' : 'Not set');
   console.log('- API Key value:', GOOGLE_API_KEY ? `${GOOGLE_API_KEY.substr(0, 5)}...` : 'Missing');

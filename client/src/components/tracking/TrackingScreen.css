@@ -8,69 +8,103 @@
   }
   
   .tracking-header {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    padding: 10px;
+    background: linear-gradient(135deg, #3563DC, #006CFF);
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 14px;
+    z-index: 10;
+    max-width: calc(100% - 24px);
+    margin: 0 auto;
     display: flex;
     align-items: center;
+    justify-content: center;
+  }
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
     justify-content: space-between;
-    padding: 12px 16px;
-    background-color: #006CFF;
-    color: white;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
-    z-index: 10;
   }
   
   .tracking-back-button {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.15);
     border: none;
-    padding: 8px;
-    margin-right: 4px;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    min-width: 40px;
-    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+  
+  .tracking-back-button:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.25);
   }
   
   .tracking-back-button img {
-    width: 24px;
-    height: 24px;
+    width: 14px;
+    height: 14px;
     filter: brightness(0) invert(1);
   }
   
   .destination-info {
-    flex: 2;
-    max-width: 70%;
-    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
   
   .destination-info h3 {
     margin: 0;
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
     color: white;
-    margin-bottom: 4px;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80%;
     text-align: center;
   }
   
   .destination-details {
     display: flex;
-    justify-content: center;
-    margin-top: 6px;
-    align-items: center;
-    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 2px;
   }
   
-  .destination-details p {
-    margin: 0;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.9);
-    margin-right: 12px;
+  .detail-item {
     display: flex;
     align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
   }
   
-  .destination-details p:last-child {
-    margin-right: 0;
+  .detail-icon {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .header-right-space {
+    width: 32px;
+    min-width: 32px;
   }
   
   .tracking-map-container {
@@ -84,7 +118,7 @@
     position: fixed;
     left: 20px;
     bottom: 20px;
-    z-index: 9999;
+    z-index: 1001;
   }
   
   .tracking-location-btn {
@@ -92,9 +126,9 @@
     background-color: white;
     border: none;
     border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    width: 35px;
+    height: 35px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     padding: 8px;
     transition: all 0.3s ease;
@@ -113,6 +147,31 @@
   
   .tracking-location-btn.active img {
     filter: brightness(0) invert(1); /* 이미지를 흰색으로 변경 */
+  }
+  
+  /* 위치 펄스 효과 추가 */
+  .tracking-location-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: rgba(89, 123, 235, 0.2);
+    border-radius: 50%;
+    z-index: 1;
+    animation: locationPulse 2s infinite;
+  }
+  
+  @keyframes locationPulse {
+    0% {
+      transform: translate(-50%, -50%) scale(0.5);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 0;
+    }
   }
   
   /* 위치 아이콘 스타일 추가 */
@@ -149,9 +208,4 @@
       transform: scale(2);
       opacity: 0;
     }
-  }
-  
-  .header-right-space {
-    min-width: 40px;
-    flex-shrink: 0;
   } 

@@ -163,25 +163,31 @@ class RouteService {
 
         const path = pathCoordinates.map(coord => new naver.maps.LatLng(coord[1], coord[0]));
  
-         // 경로에 테두리 주기
-         this.pathBorderInstance = new naver.maps.Polyline({
-           map: this.mapInstance,
-           path: path,
-           strokeColor: '#000000',
-           strokeWeight: 5,
-           strokeOpacity: 1,
-           strokeLineCap: 'round',
-           strokeLineJoin: 'round',
-           zIndex: 1
-         });
+        // 모든 경로 유형에 대해 동일한 색상 사용 (지도에서 잘 보이는 색상)
+        const routeColor = {
+          border: '#FFFFFF',     // 테두리 색상 (흰색)
+          main: '#4B89DC'        // 메인 경로 색상 (네이버 지도 스타일 파란색)
+        };
  
-         // 메인 경로 그리기
+        // 경로에 테두리 주기 - 더 두껍고 불투명하게 설정
+        this.pathBorderInstance = new naver.maps.Polyline({
+          map: this.mapInstance,
+          path: path,
+          strokeColor: routeColor.border,
+          strokeWeight: 12,       // 테두리를 더 두껍게
+          strokeOpacity: 1,       // 완전 불투명하게
+          strokeLineCap: 'round',
+          strokeLineJoin: 'round',
+          zIndex: 1
+        });
+ 
+        // 메인 경로 그리기 - 더 선명하고 생생한 색상으로
         this.pathInstance = new naver.maps.Polyline({
           map: this.mapInstance,
           path: path,
-          strokeColor: '#597BEB',
-          strokeWeight: 3,
-          strokeOpacity: 1,
+          strokeColor: routeColor.main,
+          strokeWeight: 6,        // 약간 더 두껍게
+          strokeOpacity: 1,       // 완전 불투명하게
           strokeLineCap: 'round',
           strokeLineJoin: 'round',
           zIndex: 2
