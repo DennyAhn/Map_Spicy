@@ -54,7 +54,7 @@ const SuggestPage = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3001/analyze', {
+      const response = await axios.post('http://localhost:3001/api/preprocess/analyze', {
         title: formData.title,
         content: formData.description,
         category: formData.category,
@@ -75,7 +75,7 @@ const SuggestPage = () => {
       });
       sessionStorage.removeItem('suggestForm');
 
-      setTimeout(() => setSubmitted(false), 3000);
+      alert('건의사항이 정상적으로 접수되었습니다.');
     } catch (error) {
       console.error('건의 제출 중 오류:', error);
       console.error('응답 상태 코드:', error.response?.status);

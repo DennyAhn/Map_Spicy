@@ -14,6 +14,7 @@ import SuggestionsPage from './components/pages/SuggestPage';
 import AboutPage from './components/pages/AboutPage';
 import TermsPage from './components/pages/TermsPage';
 import SupportPage from './components/pages/SupportPage';
+import AdminPage from './components/pages/AdminPage';
 
 /** 새로운 추적 화면 컴포넌트 */
 import TrackingScreen from "./components/tracking/TrackingScreen";
@@ -157,6 +158,8 @@ const App = () => {
 
           {/* 건의함 페이지 */}
           <Route path="/suggest" element={<SuggestionsPage />} />
+          {/* 관리자 페이지 */}
+          <Route path="/admin" element={<AdminPage />} />
 
           {/* 새 페이지 추가 */}
           <Route path="/about" element={<AboutPage />} />

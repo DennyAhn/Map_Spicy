@@ -6,6 +6,9 @@ const axios = require('axios');
 const geocodeRouter = require("./router/geocodeRouter");
 const geocode = require('./router/geocode');
 const directionRouter = require("./router/directionRouter");
+const complaintsRouter = require('./router/complaints');  // ✅ 민원 조회용
+const preprocessRouter = require('./router/preprocess');  // ✅ 민원 등록용
+const featureIssuesRouter = require('./router/featureIssues'); // ✅ 고객센터 1:1 문의용
 
 const policePlacesRouter = require("./router/filter/policePlacesRouter");
 const fireStationRouter = require("./router/filter/fireStationPlacesRouter");
@@ -23,7 +26,7 @@ app.use(express.json());
 // CORS 설정
 app.use(
   cors({
-    origin: "http://my-capston.kro.kr:3000", // React 앱에서 오는 요청 허용
+    origin: "http://localhost:3000", // React 앱에서 오는 요청 허용
   })
 );
 
@@ -36,6 +39,9 @@ app.get("/", (req, res) => {
 app.use("/geocode", geocodeRouter);
 app.use('/api/geocode', geocode);
 app.use("/direction", directionRouter);
+app.use('/api/complaints', complaintsRouter);   // 🔵 AdminPage 조회용
+app.use('/api/preprocess', preprocessRouter);   // 🔵 SuggestPage 등록용
+app.use('/api/feature-issues', featureIssuesRouter); // 🔵 SupportPage 1:1 문의용
 
 // 필터링된 장소 API 라우터 연결
 app.use('/api/policePlaces', policePlacesRouter);
@@ -100,7 +106,7 @@ app.get('/api/places', async (req, res) => {
 
 // 서버 실행
 app.listen(PORT, () => {
-  console.log(`Server running on http://my-capston.kro.kr:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
   console.log('Environment check:');
   console.log('- API Key status:', GOOGLE_API_KEY ? 'Set' : 'Not set');
   console.log('- API Key value:', GOOGLE_API_KEY ? `${GOOGLE_API_KEY.substr(0, 5)}...` : 'Missing');
