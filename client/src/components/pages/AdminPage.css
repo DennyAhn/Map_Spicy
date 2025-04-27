@@ -20,7 +20,7 @@
   padding-bottom: 1rem;
 }
 
-.filter-bar {
+.admin-filter-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
@@ -28,19 +28,19 @@
   margin-bottom: 2.5rem;
 }
 
-.filter-group {
+.admin-filter-group {
   display: flex;
   flex-direction: column;
 }
 
-.filter-group label {
+.admin-filter-group label {
   font-size: 0.9rem;
   color: #444;
   margin-bottom: 0.4rem;
   font-weight: 600;
 }
 
-.filter-group select {
+.admin-filter-group select {
   padding: 0.5rem 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -195,17 +195,17 @@
   color: #222;
 }
 
-.search-section {
+.admin-search-section {
   margin-top: 3rem;
 }
 
-.search-title {
+.admin-search-title {
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 1rem;
 }
 
-.search-input {
+.admin-search-input {
   width: 100%;
   padding: 12px;
   border: 1px solid #bbb;

@@ -127,8 +127,8 @@ const AdminPage = () => {
     <div className="admin-container">
       <h1 className="admin-title">📊 관리자 페이지</h1>
 
-      <div className="filter-bar">
-        <div className="filter-group">
+      <div className="admin-filter-bar">
+        <div className="admin-filter-group">
           <label>카테고리</label>
           <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
             {['전체', '엘리베이터', '계단', '도로', '조명', '난간', '기타'].map(opt => <option key={opt}>{opt}</option>)}
@@ -216,11 +216,11 @@ const AdminPage = () => {
         </div>
       </div>
 
-      <div className="search-section">
-        <h2 className="search-title">🔍 민원 검색</h2>
+      <div className="admin-search-section">
+        <h2 className="admin-search-title">🔍 민원 검색</h2>
         <input
           type="text"
-          className="search-input"
+          className="admin-search-input"
           placeholder="제목, 내용, 유형, 키워드 검색..."
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}

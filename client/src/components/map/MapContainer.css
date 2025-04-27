@@ -325,16 +325,6 @@
     color: #888;
   }
   
-  /* filter-button이 선택되었을 때의 스타일 */
-  .filter-button.selected {
-    background-color: #1E90FF;
-    color: white;
-  }
-  
-  .filter-button.selected .filter-button-icon {
-    background-color: #1E90FF;
-  }
-  
   /* 모바일 최적화 */
   @media (max-width: 768px) {
     .header {
