@@ -5,7 +5,7 @@ export const fetchPharmacyPlacesData = async (lat, lng) => {
         lat: lat,
         lng: lng
       });
-      const PROXY_URL = 'http://map-spicy.kro.kr';
+      const PROXY_URL = 'http://15.164.94.96:3001/';
       const response = await fetch(`${PROXY_URL}/api/pharmacyPlaces?${params}`);
       
       if (!response.ok) {

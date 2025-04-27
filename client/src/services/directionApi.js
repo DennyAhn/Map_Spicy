@@ -1,6 +1,7 @@
 // src/services/directionApi.js
 export const directionRequest = async (start, goal) => {
-  const url = `http://map-spicy.kro.kr/direction?start=${start}&goal=${goal}`;
+  const PROXY_URL = 'http://15.164.94.96:3001/';
+  const url = `${PROXY_URL}direction?start=${start}&goal=${goal}`;
   const response = await fetch(url, {
     method: "GET",
   });
