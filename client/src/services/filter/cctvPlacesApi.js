@@ -8,7 +8,7 @@ export const fetchCCTVPlacesData = async (lat, lng) => {
       lng: lng
     });
     
-    const PROXY_URL = 'http://localhost:3001';
+    const PROXY_URL = 'http://15.164.94.96:3001/';
     const url = `${PROXY_URL}/api/cctvPlaces?${params}`;
     console.log('요청 URL:', url);
     
