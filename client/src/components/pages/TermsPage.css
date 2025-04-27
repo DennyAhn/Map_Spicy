@@ -164,20 +164,38 @@
   }
 
   .guide-container .instruction-card {
-    flex-direction: column;
-    padding: 1rem;
+    display: flex;
+    align-items: flex-start;
     gap: 1rem;
-    margin-top: 0.5rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 8px;
+    margin-top: 1rem;
   }
 
   .guide-container .step-number {
-    width: 32px;
-    height: 32px;
-    font-size: 0.9rem;
+    width: 40px;
+    height: 40px;
+    background: #3498db;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
   }
 
+  .guide-container .step-content {
+    flex: 1;
+  }
+  
   .guide-container .step-content h3 {
-    font-size: 1.1rem;
+    display: inline-flex; /* ✅ h3만 inline-flex로 */
+    align-items: center;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
   }
 
   .guide-container .step-content li {
@@ -191,11 +209,15 @@
   }
 
   .guide-container .feature-card {
-    padding: 1rem;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    padding: 1.2rem;
+    background: white;
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.2s;
+    overflow: hidden; /* 넘치는 텍스트 숨김 */
+    text-overflow: ellipsis;
+    white-space: normal; /* 여러 줄 허용 */
+    word-break: keep-all; /* 단어 단위로 끊기 */
   }
 
   .guide-container .feature-icon {
@@ -210,15 +232,17 @@
   }
 
   .guide-container .back-button-term {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    background: rgba(255,255,255,0.9);
-    padding: 8px;
-    border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    z-index: 100;
-  }
+    position: static;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    color: #3498db;
+    font-size: 1rem;
+    margin-bottom: 0.1rem;
+    cursor: pointer;
+    text-align: left;
+  }  
 
   /* 본 페이지에만 적용되도록 한정 */
   .guide-container h2 {
@@ -232,8 +256,18 @@
     line-height: 1.5;
   }
 
+  .guide-container .step-content ul {
+    margin-top: 8px;
+    padding-left: 20px;
+  }
+
   .guide-container .function-item h3 {
     font-size: 1rem;
+  }
+
+  .guide-container .step-content ul li {
+    font-size: 1rem;
+    line-height: 1.5;
   }
 
   .guide-container button,

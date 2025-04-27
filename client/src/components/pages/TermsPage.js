@@ -39,23 +39,34 @@ const TermsPage = () => {
             </ul>
           </div>
         </div>
+
+        <div className="instruction-card">
+          <div className="step-number">3</div>
+          <div className="step-content">
+            <h3>따라가기</h3>
+            <ul>
+              <li>상단 화면을 통해 소요 시간, 거리를 확인 가능</li>
+              <li>실시간 위치 정보 제공</li>
+            </ul>
+          </div>
+        </div>
       </section>
 
       <section className="guide-section">
         <h2>🧭 모드별 필터 기능</h2>
         <div className="feature-grid">
           <div className="feature-card">
-            <div className="feature-icon">👤</div>
+            <div className="feature-icon"><img src='./images/panel/human-male.png'></img></div>
             <h3>일반 모드</h3>
             <p>공사구간, 경찰서, 소방시설 등<br/>기본 필터 표시</p>
           </div>
           <div className="feature-card">
-            <div className="feature-icon">👩</div>
+          <div className="feature-icon"><img src='./images/panel/human-female.png'></img></div>
             <h3>여성 모드</h3>
             <p>CCTV, 비상벨, 편의점 등<br/>여성 안전시설 필터 제공</p>
           </div>
           <div className="feature-card">
-            <div className="feature-icon">🧓</div>
+          <div className="feature-icon"><img src='./images/panel/human-wheelchair.png'></img></div>
             <h3>노약자 모드</h3>
             <p>엘리베이터, 복지시설, 약국 등<br/>배리어프리 정보 제공</p>
           </div>
