@@ -259,7 +259,8 @@ class MarkerService {
       '지하철역 엘레베이터': '/images/icon/old/ele.svg',
       '심야약국': '/images/icon/old/drugstore.svg',
       '휠체어 전소': '/images/icon/old/charge.png',
-      '복지시설': '/images/icon/old/noin.png'
+      '복지시설': '/images/icon/old/noin.png',
+      '외국인 주의구역': '/images/icon/normal/warning.png'
     };
 
     const iconUrl = iconMap[category] || '/images/default-marker.png';
