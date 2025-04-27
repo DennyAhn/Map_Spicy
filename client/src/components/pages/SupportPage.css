@@ -63,7 +63,7 @@
   
   .inquiry-form input,
   .inquiry-form textarea {
-    width: 100%;
+    width: 85%;
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 6px;
@@ -71,8 +71,13 @@
     font-size: 1rem;
   }
 
+  .inquiry-form input {
+    margin-top: 1rem;
+  }
+
   .inquiry-form button {
     width: 200px;
     height: 35px;
     border-radius: 30px;
+    margin-bottom: 1rem;
   }
