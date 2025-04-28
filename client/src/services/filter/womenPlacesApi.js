@@ -6,7 +6,7 @@ export const fetchWomenPlacesData = async (lat, lng) => {
       lng: lng
     });
     
-    const PROXY_URL = 'http://15.164.94.96:3001/';
+    const PROXY_URL = 'http://localhost:3001';
     const response = await fetch(`${PROXY_URL}/api/womenPlaces?${params}`);
     
     if (!response.ok) {
