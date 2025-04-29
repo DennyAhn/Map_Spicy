@@ -18,7 +18,7 @@ const convenienceStoreService = {
         query: '편의점', // 검색 키워드
         x: lng,          // 경도
         y: lat,          // 위도
-        radius: 1000,    // 5km 반경
+        radius: 1000,    // 1km 반경
         size: 15         // 검색 결과 수
       });
       
@@ -46,11 +46,47 @@ const convenienceStoreService = {
 
       console.log(`카카오 API에서 ${data.documents.length}개의 결과 반환됨`);
 
-      // 각 결과에서 위도/경도 정보만 추출하여 반환
+      // 거리 계산 함수
+      const calculateDistance = (lat1, lng1, lat2, lng2) => {
+        const R = 6371; // 지구 반지름(km)
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = 
+          Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+          Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        const distance = R * c;
+        
+        // 거리를 km 또는 m 단위로 반환
+        if (distance >= 1) {
+          return `${distance.toFixed(1)}km`;
+        } else {
+          return `${Math.round(distance * 1000)}m`;
+        }
+      };
+
+      // 각 결과에서 필요한 정보 추출하여 반환
       const mappedData = data.documents.map(place => {
+        const distance = calculateDistance(
+          parseFloat(lat), 
+          parseFloat(lng), 
+          parseFloat(place.y), 
+          parseFloat(place.x)
+        );
+        
+        // 방문자 리뷰 정보 (실제 API에서는 없으므로 랜덤으로 생성)
+        const visitors = Math.floor(Math.random() * 100) + 1;
+        
         return { 
-          latitude: parseFloat(place.y),  // 카카오 API는 y가 위도(latitude)
-          longitude: parseFloat(place.x)  // 카카오 API는 x가 경도(longitude)
+          name: place.place_name,                     // 장소명
+          address: place.road_address_name || place.address_name, // 도로명 주소 또는 지번 주소
+          distance: distance,                         // 현재 위치에서의 거리
+          phone: place.phone || '',                   // 전화번호 (있을 경우)
+          category: place.category_name || '편의점',    // 카테고리
+          visitors: String(visitors),                 // 방문자 수 (편의점에만 추가)
+          latitude: parseFloat(place.y),              // 위도
+          longitude: parseFloat(place.x)              // 경도
         };
       });
 

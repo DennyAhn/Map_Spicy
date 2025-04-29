@@ -1,5 +1,5 @@
 // src/components/map/MapContainer.js
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import NaverMap from './NaverMap';
 import MenuPanel from '../panels/MenuPanel';
 import './MapContainer.css';
@@ -31,23 +31,8 @@ const filterButtons = {
   ],
 };
 
-// 목 데이터 - 실제로는 API에서 가져올 정보
-const mockListData = {
-  '편의점': [
-    { name: 'GS25 성서계대원룸점', address: '달구벌대로203길 58', distance: '120m', visitors: '55', coords: { latitude: 35.8533, longitude: 128.4897 } },
-    { name: '이마트24 계대호산원룸점', address: '달구벌대로199길 42', distance: '130m', visitors: '27', coords: { latitude: 35.8524, longitude: 128.4905 } },
-    { name: 'GS25 성서동산병원점', address: '달구벌대로 1770', distance: '240m', visitors: '48', coords: { latitude: 35.8548, longitude: 128.4922 } },
-  ],
-  '소방시설': [
-    { name: '서부소방서 성서119안전센터', address: '와룡로 45', distance: '650m', coords: { latitude: 35.8602, longitude: 128.4814 } },
-    { name: '대구소방본부', address: '공항로 221', distance: '3.2km', coords: { latitude: 35.8713, longitude: 128.6041 } },
-  ],
-  '경찰서': [
-    { name: '달서경찰서', address: '야외음악당로 99', distance: '1.5km', coords: { latitude: 35.8583, longitude: 128.5236 } },
-    { name: '성서지구대', address: '조암남로 5', distance: '850m', coords: { latitude: 35.8517, longitude: 128.5123 } },
-  ],
-  // 다른 카테고리에 대한 목 데이터도 추가할 수 있음
-};
+// API 호출을 위한 기본 URL
+const API_BASE_URL = 'http://localhost:3001'; // 개발 환경에서는 localhost 사용
 
 const MapContainer = ({ 
   selectedMode, 
@@ -65,11 +50,108 @@ const MapContainer = ({
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [listPanelData, setListPanelData] = useState([]);
   const [showListPanel, setShowListPanel] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const mapServiceRef = useRef(null);
 
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
 
-  const handleFilterClick = (filterText) => {
+  // API에서 데이터 가져오기
+  const fetchCategoryData = async (category) => {
+    setIsLoading(true);
+    setError(null);
+    console.log(`${category} 데이터 요청 시작...`);
+    
+    try {
+      // 현재 위치 가져오기
+      let latitude = 35.8533;  // 기본 위치
+      let longitude = 128.4897;  // 기본 위치
+      
+      if (mapServiceRef.current?.getCurrentLocation) {
+        const currentLocation = mapServiceRef.current.getCurrentLocation();
+        if (currentLocation) {
+          latitude = currentLocation.latitude;
+          longitude = currentLocation.longitude;
+        }
+      }
+      
+      console.log(`현재 위치: 위도 ${latitude}, 경도 ${longitude}`);
+      
+      // 카테고리에 따른 API 엔드포인트 매핑
+      const categoryApiMap = {
+        '편의점': '/api/ConvenienceStores',
+        '소방시설': '/api/fireStationPlaces',
+        '경찰서': '/api/policePlaces',
+        '안전비상벨': '/api/womenPlaces',
+        'CCTV': '/api/cctvPlaces',
+        '지하철역 엘리베이터': '/api/elderlyPlaces',
+        '심야약국': '/api/pharmacyPlaces',
+        '휠체어 충전소': '/api/wheelChairPlaces',
+        '복지시설': '/api/elderlyPlaces',
+        '외국인 주의구역': '/api/womenPlaces', // 적절한 API가 없을 경우 임시로 매핑
+      };
+      
+      const apiEndpoint = categoryApiMap[category];
+      if (!apiEndpoint) {
+        throw new Error(`${category}에 대한 API 엔드포인트가 정의되지 않았습니다`);
+      }
+      
+      const apiUrl = `${API_BASE_URL}${apiEndpoint}?lat=${latitude}&lng=${longitude}`;
+      console.log(`API 요청 URL: ${apiUrl}`);
+      
+      // API 호출
+      const response = await fetch(apiUrl);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`API 응답 에러: ${response.status} ${errorText}`);
+        throw new Error(`데이터를 가져오는데 실패했습니다 (${response.status})`);
+      }
+      
+      const data = await response.json();
+      console.log(`${category} 데이터 응답:`, data);
+      
+      // 데이터의 첫 번째 항목의 모든 속성 출력 (디버깅)
+      if (data && data.length > 0) {
+        console.log(`첫 번째 항목 세부 정보:`, data[0]);
+        console.log(`name 속성: "${data[0].name}"`);
+        console.log(`address 속성: "${data[0].address}"`);
+        console.log(`distance 속성: "${data[0].distance}"`);
+        // 모든 키 출력
+        console.log('사용 가능한 속성:', Object.keys(data[0]));
+      }
+      
+      if (!data || data.length === 0) {
+        console.log(`${category}에 대한 데이터가 없습니다.`);
+        return [];
+      }
+      
+      // 서버에서 이미 모든 정보가 포함된 형태로 반환되므로 그대로 사용
+      // 하지만 필요한 속성이 없을 경우를 대비하여 기본값 설정
+      const formattedData = data.map(item => ({
+        ...item,
+        id: item.id || `${category}-${Math.random().toString(36).substr(2, 9)}`,
+        name: item.name || `${category}`, 
+        address: item.address || '주소 정보 없음',
+        distance: item.distance || '거리 정보 없음',
+        coords: {
+          latitude: item.latitude,
+          longitude: item.longitude
+        }
+      }));
+      
+      console.log(`${category} 데이터 변환 완료:`, formattedData.length);
+      return formattedData;
+    } catch (err) {
+      console.error(`API 호출 오류 (${category}):`, err);
+      setError(err.message);
+      return [];
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFilterClick = async (filterText) => {
     setActiveFilters(prev =>
       prev.includes(filterText)
         ? prev.filter(f => f !== filterText)
@@ -77,20 +159,38 @@ const MapContainer = ({
     );
     
     // 카테고리 버튼 클릭 시 리스트 패널 표시
-    if (mockListData[filterText]) {
-      if (selectedCategory === filterText && showListPanel) {
-        // 같은 카테고리를 다시 클릭하면 패널 닫기
-        setShowListPanel(false);
-        setSelectedCategory(null);
-      } else {
-        setListPanelData(mockListData[filterText]);
-        setSelectedCategory(filterText);
-        setShowListPanel(true);
-      }
-    } else {
-      // 데이터가 없는 카테고리는 패널 닫기
+    if (selectedCategory === filterText && showListPanel) {
+      // 같은 카테고리를 다시 클릭하면 패널 닫기
       setShowListPanel(false);
       setSelectedCategory(null);
+    } else {
+      // API에서 데이터 가져오기
+      setSelectedCategory(filterText);
+      setShowListPanel(true);
+      setListPanelData([]); // 로딩 전 초기화
+      
+      try {
+        const data = await fetchCategoryData(filterText);
+        
+        if (data && data.length > 0) {
+          console.log(`리스트 패널 데이터 설정: ${data.length}개 항목`);
+          setListPanelData(data);
+        } else {
+          // API 실패 시 기본 데이터 표시 (개발 중에만 사용)
+          console.log(`${filterText}에 대한 데이터가 없습니다. 기본 메시지 표시`);
+          const fallbackData = [
+            { 
+              name: `주변에 ${filterText} 정보가 없습니다`, 
+              address: '다른 지역에서 다시 시도해보세요', 
+              distance: '-' 
+            }
+          ];
+          setListPanelData(fallbackData);
+        }
+      } catch (err) {
+        console.error(`필터 데이터 가져오기 실패: ${err.message}`);
+        setError(err.message);
+      }
     }
   };
 
@@ -224,18 +324,50 @@ const MapContainer = ({
             </button>
           </div>
           <div className="list-panel-content">
-            {listPanelData.map((item, index) => (
-              <div key={index} className="list-item">
-                <div className="list-item-content">
-                  <h4 className="list-item-title">{item.name}</h4>
-                  <p className="list-item-distance">{item.distance}</p>
-                  <p className="list-item-address">{item.address}</p>
-                  {item.visitors && (
-                    <p className="list-item-visitors">방문자 리뷰 {item.visitors}</p>
-                  )}
-                </div>
+            {isLoading ? (
+              <div className="loading-indicator">로딩 중...</div>
+            ) : error ? (
+              <div className="error-message">
+                <p>데이터를 불러오는데 실패했습니다</p>
+                <p className="error-details">{error}</p>
+                <p className="error-help">서버가 실행 중인지 확인하세요</p>
               </div>
-            ))}
+            ) : listPanelData.length === 0 ? (
+              <div className="empty-result">
+                <p>주변에 {selectedCategory} 정보가 없습니다</p>
+                <p>다른 위치에서 다시 시도해보세요</p>
+              </div>
+            ) : (
+              listPanelData.map((item, index) => {
+                // 각 아이템 디버깅
+                console.log(`리스트 아이템 ${index}:`, item);
+                
+                return (
+                  <div key={index} className="list-item">
+                    <div className="list-item-content">
+                      <h4 className="list-item-title">
+                        {item.name || `${selectedCategory} ${index + 1}`}
+                      </h4>
+                      <p className="list-item-distance">
+                        {item.distance || '거리 정보 없음'}
+                      </p>
+                      <p className="list-item-address">
+                        {item.address || '주소 정보 없음'}
+                      </p>
+                      {item.visitors && (
+                        <p className="list-item-visitors">방문자 리뷰 {item.visitors}</p>
+                      )}
+                      {item.phone && item.phone !== '' && (
+                        <p className="list-item-phone">전화: {item.phone}</p>
+                      )}
+                      {item.category && item.category !== selectedCategory && (
+                        <p className="list-item-category">분류: {item.category}</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       )}

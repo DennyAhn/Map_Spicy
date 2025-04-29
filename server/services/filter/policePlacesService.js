@@ -46,13 +46,54 @@ const policePlacesService = {
 
       console.log(`카카오 API에서 ${data.documents.length}개의 결과 반환됨`);
 
-      // 각 결과에서 위도/경도 정보만 추출하여 반환
+      // 거리 계산 함수
+      const calculateDistance = (lat1, lng1, lat2, lng2) => {
+        const R = 6371; // 지구 반지름(km)
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = 
+          Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+          Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        const distance = R * c;
+        
+        // 거리를 km 또는 m 단위로 반환
+        if (distance >= 1) {
+          return `${distance.toFixed(1)}km`;
+        } else {
+          return `${Math.round(distance * 1000)}m`;
+        }
+      };
+
+      // 각 결과에서 필요한 정보 추출하여 반환
       const mappedData = data.documents.map(place => {
-        return { 
-          latitude: parseFloat(place.y),  // 카카오 API는 y가 위도(latitude)
-          longitude: parseFloat(place.x)  // 카카오 API는 x가 경도(longitude)
+        const distance = calculateDistance(
+          parseFloat(lat), 
+          parseFloat(lng), 
+          parseFloat(place.y), 
+          parseFloat(place.x)
+        );
+        
+        const placeData = { 
+          name: place.place_name,                     // 장소명
+          address: place.road_address_name || place.address_name, // 도로명 주소 또는 지번 주소
+          distance: distance,                         // 현재 위치에서의 거리
+          phone: place.phone || '',                   // 전화번호 (있을 경우)
+          category: place.category_name || '경찰서',    // 카테고리
+          latitude: parseFloat(place.y),              // 위도
+          longitude: parseFloat(place.x)              // 경도
         };
+        
+        // 각 장소 데이터 로깅
+        console.log('장소 데이터:', JSON.stringify(placeData));
+        
+        return placeData;
       });
+
+      // 최종 응답 데이터 로깅
+      console.log('최종 응답 데이터 예시:', JSON.stringify(mappedData[0]));
+      console.log('총 반환 데이터 수:', mappedData.length);
 
       return mappedData;
     } catch (error) {
