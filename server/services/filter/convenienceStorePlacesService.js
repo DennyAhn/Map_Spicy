@@ -45,6 +45,7 @@ const convenienceStoreService = {
       }
 
       console.log(`카카오 API에서 ${data.documents.length}개의 결과 반환됨`);
+      console.log('첫 번째 편의점 데이터 예시:', data.documents[0]);
 
       // 거리 계산 함수
       const calculateDistance = (lat1, lng1, lat2, lng2) => {
@@ -78,9 +79,12 @@ const convenienceStoreService = {
         // 방문자 리뷰 정보 (실제 API에서는 없으므로 랜덤으로 생성)
         const visitors = Math.floor(Math.random() * 100) + 1;
         
-        return { 
+        const placeData = { 
+          id: place.id,                               // 장소 ID
           name: place.place_name,                     // 장소명
           address: place.road_address_name || place.address_name, // 도로명 주소 또는 지번 주소
+          jibunAddress: place.address_name,           // 지번 주소
+          roadAddress: place.road_address_name,       // 도로명 주소
           distance: distance,                         // 현재 위치에서의 거리
           phone: place.phone || '',                   // 전화번호 (있을 경우)
           category: place.category_name || '편의점',    // 카테고리
@@ -88,7 +92,18 @@ const convenienceStoreService = {
           latitude: parseFloat(place.y),              // 위도
           longitude: parseFloat(place.x)              // 경도
         };
+        
+        // 각 장소 데이터 로깅
+        console.log('장소 데이터:', JSON.stringify(placeData));
+        
+        return placeData;
       });
+
+      // 최종 응답 데이터 로깅
+      if (mappedData.length > 0) {
+        console.log('최종 응답 데이터 예시:', JSON.stringify(mappedData[0]));
+        console.log('총 반환 데이터 수:', mappedData.length);
+      }
 
       return mappedData;
     } catch (error) {

@@ -45,6 +45,7 @@ const policePlacesService = {
       }
 
       console.log(`카카오 API에서 ${data.documents.length}개의 결과 반환됨`);
+      console.log('첫 번째 경찰서 데이터 예시:', data.documents[0]);
 
       // 거리 계산 함수
       const calculateDistance = (lat1, lng1, lat2, lng2) => {
@@ -76,8 +77,11 @@ const policePlacesService = {
         );
         
         const placeData = { 
+          id: place.id,                               // 장소 ID
           name: place.place_name,                     // 장소명
           address: place.road_address_name || place.address_name, // 도로명 주소 또는 지번 주소
+          jibunAddress: place.address_name,           // 지번 주소
+          roadAddress: place.road_address_name,       // 도로명 주소
           distance: distance,                         // 현재 위치에서의 거리
           phone: place.phone || '',                   // 전화번호 (있을 경우)
           category: place.category_name || '경찰서',    // 카테고리
@@ -92,8 +96,10 @@ const policePlacesService = {
       });
 
       // 최종 응답 데이터 로깅
-      console.log('최종 응답 데이터 예시:', JSON.stringify(mappedData[0]));
-      console.log('총 반환 데이터 수:', mappedData.length);
+      if (mappedData.length > 0) {
+        console.log('최종 응답 데이터 예시:', JSON.stringify(mappedData[0]));
+        console.log('총 반환 데이터 수:', mappedData.length);
+      }
 
       return mappedData;
     } catch (error) {
