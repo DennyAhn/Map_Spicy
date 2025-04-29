@@ -313,15 +313,6 @@ const MapContainer = ({
               {selectedCategory} 
               <span className="list-count">({listPanelData.length})</span>
             </h3>
-            <button 
-              className="list-panel-close" 
-              onClick={() => {
-                setShowListPanel(false);
-                setSelectedCategory(null);
-              }}
-            >
-              ×
-            </button>
           </div>
           <div className="list-panel-content">
             {isLoading ? (

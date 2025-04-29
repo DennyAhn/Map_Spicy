@@ -197,7 +197,7 @@
   
   /* 패널이 열려있을 때 버튼 위치 조정 */
   .move-to-current-button.panel-open {
-    bottom: 65vh; /* 패널 높이(60vh)보다 약간 위에 위치 */
+    bottom: 40vh; /* 패널 높이(35vh)보다 약간 위에 위치 */
     z-index: 1100; /* 패널보다 위에 표시되도록 z-index 높임 */
   }
   
@@ -237,7 +237,7 @@
     border-radius: 16px 16px 0 0;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     height: auto;
-    max-height: 60vh;
+    max-height: 35vh; /* 60vh에서 35vh로 변경 */
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -283,7 +283,7 @@
   
   .list-panel-content {
     overflow-y: auto;
-    max-height: calc(60vh - 60px);
+    max-height: calc(35vh - 60px); /* 60vh에서 35vh로 변경 */
     padding: 0;
     -webkit-overflow-scrolling: touch;
   }

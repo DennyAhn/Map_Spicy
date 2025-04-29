@@ -87,9 +87,9 @@ class MapService {
           console.error('Error getting current position:', error);
         },
         {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 30000
         }
       );
     }
@@ -240,9 +240,9 @@ class MapService {
           console.error('현재 위치를 가져올 수 없습니다:', error);
         },
         {
-          enableHighAccuracy: true,
-          timeout: 3000,
-          maximumAge: 0
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 30000
         }
       );
     }

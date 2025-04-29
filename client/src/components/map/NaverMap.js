@@ -61,6 +61,10 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
               // 지도 초기화 및 현재 위치로 설정
               mapService.current = new MapService(mapRef.current, { latitude, longitude });
               markerService.current = new MarkerService();
+              
+              // 현재 위치에 마커
+              mapService.current.setCurrentLocation({ latitude, longitude });
+              
               setIsMapReady(true);
 
               // 실시간 위치 추적 시작
