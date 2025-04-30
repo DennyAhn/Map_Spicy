@@ -107,7 +107,7 @@ const SuggestPage = () => {
           <label>제목 (필수)</label>
           <input
             type="text"
-            placeholder="예) ○○아파트 1동 엘리베이터 파손"
+            placeholder="예) ○○역 n번 출구 엘리베이터 파손"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             required

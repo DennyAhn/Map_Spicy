@@ -256,9 +256,9 @@ class MarkerService {
       '범죄주의구간': '/images/icon/normal/warning.png',
       '안전비상벨': '/images/icon/women/siren.png',
       'CCTV': '/images/icon/women/cctv.png',
-      '지하철역 엘레베이터': '/images/icon/old/ele.svg',
-      '심야약국': '/images/icon/old/drugstore.svg',
-      '휠체어 전소': '/images/icon/old/charge.png',
+      '지하철역 엘리베이터': '/images/icon/old/ele.png',
+      '심야약국': '/images/icon/old/drugstore.png',
+      '휠체어 충전소': '/images/icon/old/charge.png',
       '복지시설': '/images/icon/old/noin.png',
       '외국인 주의구역': '/images/icon/normal/warning.png'
     };

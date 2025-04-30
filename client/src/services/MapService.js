@@ -21,35 +21,38 @@ class MapService {
      
     // 현재 위치 마커 아이콘 정의
     this.currentLocationIcon = {
+      content: `<img src="/images/RouteSelectionScreen/user.png" style="width: 16px; height: 16px;" />`,
+      anchor: new naver.maps.Point(20, 20)
+    };
+
+    /** 이미지 + 효과 추가
+    this.currentLocationIcon = {
       content: `
         <div style="position: relative; width: 40px; height: 40px;">
-           <!-- 외부 원 (파란색 테두리) -->
+          <!-- 외부 원 (퍼짐 효과) -->
           <div style="
             position: absolute;
-             top: 50%;
-             left: 50%;
-             transform: translate(-50%, -50%);
-             width: 24px;
-             height: 24px;
-             background: rgba(89, 123, 235, 0.2);
-             border-radius: 50%;
-             animation: pulse 2s infinite;
-           "></div>
-           
-           <!-- 내부 원 (파란색 채움) -->
-           <div style="
-             position: absolute;
-             top: 50%;
-             left: 50%;
-             transform: translate(-50%, -50%);
-             width: 12px;
-             height: 12px;
-             background: #597BEB;
-             border: 2px solid white;
-             border-radius: 50%;
-             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-           "></div>
-         </div>
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            background: rgba(89, 123, 235, 0.2);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+          "></div>
+
+          <!-- 내부 아이콘 (이미지) -->
+          <img src="/images/RouteSelectionScreen/user.png" style="
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            z-index: 1;
+          " />
+        </div>
 
         <style>
           @keyframes pulse {
@@ -66,6 +69,7 @@ class MapService {
       `,
       anchor: new naver.maps.Point(20, 20)
     };
+    */
 
     naver.maps.Event.addListener(this.mapInstance, 'zoom_changed', () => {
       const zoomLevel = this.mapInstance.getZoom();

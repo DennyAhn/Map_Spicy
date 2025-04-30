@@ -18,9 +18,9 @@ const AboutPage = () => {
       <section>
         <h2>기능 소개</h2>
         <ul className="feature-list">
-          <li>✔️ 장애물 인식 경로 탐색</li>
+          <li>✔️ 위험군 인식 경로 탐색</li>
           <li>✔️ 실시간 시설물 제보 시스템</li>
-          <li>✔️ 맞춤형 이동 경로 제공</li>
+          <li>✔️ 안전 이동 경로 제공</li>
         </ul>
       </section>
     </div>

@@ -70,32 +70,36 @@ const MapContainer = ({
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
 
   const handleFilterClick = (filterText) => {
-    setActiveFilters(prev =>
-      prev.includes(filterText)
-        ? prev.filter(f => f !== filterText)
-        : [...prev, filterText]
-    );
-    
-    // 카테고리 버튼 클릭 시 리스트 패널 표시
-    if (mockListData[filterText]) {
-      if (selectedCategory === filterText && showListPanel) {
-        // 같은 카테고리를 다시 클릭하면 패널 닫기
-        setShowListPanel(false);
-        setSelectedCategory(null);
-      } else {
-        setListPanelData(mockListData[filterText]);
-        setSelectedCategory(filterText);
-        setShowListPanel(true);
-      }
-    } else {
-      // 데이터가 없는 카테고리는 패널 닫기
+    const isAlreadyActive = activeFilters.includes(filterText);
+    const updatedFilters = isAlreadyActive
+      ? activeFilters.filter(f => f !== filterText)
+      : [...activeFilters, filterText];
+  
+    setActiveFilters(updatedFilters);
+  
+    if (!mockListData[filterText]) {
       setShowListPanel(false);
       setSelectedCategory(null);
+      return;
+    }
+  
+    if (isAlreadyActive) {
+      // 필터를 끄는 경우 → 리스트 패널도 닫기
+      setShowListPanel(false);
+      setSelectedCategory(null);
+    } else {
+      // 필터를 켜는 경우 → 리스트 패널 열기
+      setListPanelData(mockListData[filterText]);
+      setSelectedCategory(filterText);
+      setShowListPanel(true);
     }
   };
+  
+    
 
   const handleMoveToCurrent = () => {
     setIsLocationButtonActive(true);
+  
     if (mapServiceRef.current?.moveToCurrentLocation) {
       mapServiceRef.current.moveToCurrentLocation();
     }
@@ -203,6 +207,7 @@ const MapContainer = ({
         onClick={handleMoveToCurrent}
       >
         <img src="/images/RouteSelectionScreen/location.svg" alt="현재 위치로 이동" />
+        
       </button>
 
       {/* 카테고리 리스트 패널 */}

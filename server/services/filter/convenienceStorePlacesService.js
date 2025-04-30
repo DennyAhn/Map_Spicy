@@ -49,6 +49,7 @@ const convenienceStoreService = {
       // 각 결과에서 위도/경도 정보만 추출하여 반환
       const mappedData = data.documents.map(place => {
         return { 
+          name: place.place_name,
           latitude: parseFloat(place.y),  // 카카오 API는 y가 위도(latitude)
           longitude: parseFloat(place.x)  // 카카오 API는 x가 경도(longitude)
         };

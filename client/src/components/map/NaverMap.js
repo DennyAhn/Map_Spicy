@@ -6,7 +6,7 @@ import MapService from '../../services/MapService';
 import MarkerService from '../../services/MarkerService';
 import { getPlacesForFilter } from '../../services/placesApi';
 
-const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick, onCurrentLocationUpdate, startLocation }) => {
+const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick, onCurrentLocationUpdate, startLocation, mapServiceRef }) => {
   const mapRef = useRef(null);
   const mapService = useRef(null);
   const markerService = useRef(null);
@@ -60,8 +60,15 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
               
               // 지도 초기화 및 현재 위치로 설정
               mapService.current = new MapService(mapRef.current, { latitude, longitude });
+              if (mapServiceRef) {
+                mapServiceRef.current = mapService.current;
+              }
               markerService.current = new MarkerService();
               setIsMapReady(true);
+
+              //현재 위치 마커 설정
+              mapService.current.updateCurrentLocation({ latitude, longitude });
+              mapService.current.setCurrentLocation({ latitude, longitude });
 
               // 실시간 위치 추적 시작
               watchPositionId.current = navigator.geolocation.watchPosition(
@@ -84,9 +91,14 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
             (error) => {
               console.error('현재 위치를 가져올 수 없습니다:', error);
               // 위치 정보를 가져올 수 없는 경우에도 지도는 초기화
-              mapService.current = new MapService(mapRef.current);
-              markerService.current = new MarkerService();
-              setIsMapReady(true);
+              if (mapRef.current) {
+                mapService.current = new MapService(mapRef.current);
+                markerService.current = new MarkerService();
+                if (mapServiceRef) {
+                  mapServiceRef.current = mapService.current;
+                }
+                setIsMapReady(true);
+              }
             },
             {
               enableHighAccuracy: true,
