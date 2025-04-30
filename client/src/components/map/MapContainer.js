@@ -77,6 +77,39 @@ const MapContainer = ({
       
       console.log(`현재 위치: 위도 ${latitude}, 경도 ${longitude}`);
       
+      // 지하철역 엘리베이터 또는 외국인 주의구역인 경우 placesApi에서 직접 데이터 가져오기
+      if (category === '지하철역 엘리베이터' || category === '외국인 주의구역') {
+        // placesApi의 getPlacesForFilter 함수를 가져오기
+        const { getPlacesForFilter } = await import('../../services/placesApi');
+        
+        // 직접 하드코딩된 좌표 데이터 가져오기
+        const placesData = await getPlacesForFilter(category, { lat: latitude, lng: longitude });
+        
+        // 좌표 데이터만 가지고 있으므로 기본 정보 추가
+        const formattedData = placesData.map((item, index) => {
+          // 각 장소까지의 거리 계산
+          const distance = calculateDistance(
+            latitude,
+            longitude,
+            item.latitude,
+            item.longitude
+          );
+          
+          return {
+            id: `${category}-${index}`,
+            name: `${category} ${index + 1}`,
+            address: null, // null로 설정하여 주소 표시 안 함
+            distance: distance,
+            latitude: item.latitude,
+            longitude: item.longitude
+          };
+        });
+        
+        console.log(`${category} 데이터 변환 완료:`, formattedData.length);
+        return formattedData;
+      }
+      
+      // 기타 카테고리는 API 호출로 처리
       // 카테고리에 따른 API 엔드포인트 매핑
       const categoryApiMap = {
         '편의점': '/api/ConvenienceStores',
@@ -84,11 +117,9 @@ const MapContainer = ({
         '경찰서': '/api/policePlaces',
         '안전비상벨': '/api/womenPlaces',
         'CCTV': '/api/cctvPlaces',
-        '지하철역 엘리베이터': '/api/elderlyPlaces',
         '심야약국': '/api/pharmacyPlaces',
         '휠체어 충전소': '/api/wheelChairPlaces',
         '복지시설': '/api/elderlyPlaces',
-        '외국인 주의구역': '/api/womenPlaces', // 적절한 API가 없을 경우 임시로 매핑
       };
       
       const apiEndpoint = categoryApiMap[category];
@@ -148,6 +179,26 @@ const MapContainer = ({
       return [];
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // 거리 계산 함수 추가
+  const calculateDistance = (lat1, lng1, lat2, lng2) => {
+    const R = 6371; // 지구의 반지름 (km)
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c;
+    
+    // 거리를 km 또는 m 단위로 반환
+    if (distance >= 1) {
+      return `${distance.toFixed(1)}km`;
+    } else {
+      return `${Math.round(distance * 1000)}m`;
     }
   };
 
@@ -342,9 +393,11 @@ const MapContainer = ({
                       <p className="list-item-distance">
                         {item.distance || '거리 정보 없음'}
                       </p>
-                      <p className="list-item-address">
-                        {item.address || '주소 정보 없음'}
-                      </p>
+                      {item.address && (
+                        <p className="list-item-address">
+                          {item.address}
+                        </p>
+                      )}
                       {item.visitors && (
                         <p className="list-item-visitors">방문자 리뷰 {item.visitors}</p>
                       )}
