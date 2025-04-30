@@ -376,7 +376,7 @@ class MarkerService {
           <svg width="10" height="10" viewBox="0 0 24 24" style="margin-right: 4px;">
             <path fill="#fbbc05" d="M7 2l4 4H8v3H6V6H3l4-4zm10 16l-4-4h3v-3h2v3h3l-4 4zm-2-5V9h-2v4h2zm-4-4V5H9v4h2zm0 6v4h2v-4h-2zm-4 0v4h2v-4H7z"/>
           </svg>
-          첫차~막차
+          상세 정보 제공 준비 중
         </span>`); 
         break;
       case '심야약국': 
@@ -385,6 +385,14 @@ class MarkerService {
             <path fill="#ea4335" d="M6 3h12v2H6zm11 3H7c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-1 9h-2.5v2.5h-3V15H8v-3h2.5V9.5h3V12H16v3z"/>
           </svg>
           야간운영
+        </span>`); 
+        break;
+      case '외국인 주의구역': 
+        items.push(`<span style="color: #ea4335; display: inline-flex; align-items: center;">
+          <svg width="10" height="10" viewBox="0 0 24 24" style="margin-right: 4px;">
+            <path fill="#ea4335" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+          </svg>
+          상세 정보 제공 준비 중
         </span>`); 
         break;
     }
@@ -403,7 +411,7 @@ class MarkerService {
     
     // 전화번호 추가 (긴급전화번호가 있는 카테고리는 제외)
     if (place.phone && place.phone !== '' && category !== '소방시설' && category !== '경찰서') {
-      // 전화번호가 너무 길면 일부만 표시
+      
       const phone = place.phone.length > 13 ? place.phone.substring(0, 13) + '...' : place.phone;
       items.push(`<span style="color: #666; display: inline-flex; align-items: center;">
         <svg width="10" height="10" viewBox="0 0 24 24" style="margin-right: 4px;">
@@ -413,7 +421,7 @@ class MarkerService {
       </span>`);
     }
     
-    // 정보를 세련되게 표시
+    // 정보 표시
     let info = '';
     if (items.length > 0) {
       info = `
@@ -431,7 +439,7 @@ class MarkerService {
       `;
     } else {
       // 정보가 없을 경우 간단한 메시지
-      info = `<div style="text-align: center; color: #888; font-size: 10px; padding: 4px 0;">상세 정보 없음</div>`;
+      info = `<div style="text-align: center; color: #888; font-size: 10px; padding: 4px 0;">상세 정보 제공 준비 중</div>`;
     }
     
     return info;
