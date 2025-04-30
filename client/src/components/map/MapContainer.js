@@ -203,19 +203,21 @@ const MapContainer = ({
   };
 
   const handleFilterClick = async (filterText) => {
-    setActiveFilters(prev =>
-      prev.includes(filterText)
-        ? prev.filter(f => f !== filterText)
-        : [...prev, filterText]
-    );
-    
-    // 카테고리 버튼 클릭 시 리스트 패널 표시
+    // 같은 카테고리를 다시 클릭하는 경우
     if (selectedCategory === filterText && showListPanel) {
-      // 같은 카테고리를 다시 클릭하면 패널 닫기
+      // 리스트 패널 닫기
       setShowListPanel(false);
       setSelectedCategory(null);
+      
+      // 필터에서도 제거하여 마커 삭제 트리거
+      setActiveFilters(prev => prev.filter(f => f !== filterText));
     } else {
-      // API에서 데이터 가져오기
+      // 다른 카테고리를 클릭하는 경우
+      
+      // 모든 기존 필터 제거하고 새 필터만 추가 (한 번에 하나의 카테고리만 표시)
+      setActiveFilters([filterText]);
+      
+      // 리스트 패널 설정
       setSelectedCategory(filterText);
       setShowListPanel(true);
       setListPanelData([]); // 로딩 전 초기화
@@ -319,7 +321,7 @@ const MapContainer = ({
             {filterButtons[selectedMode].map((button, index) => (
               <button 
                 key={index} 
-                className={`filter-button ${activeFilters.includes(button.text) ? 'active' : ''} ${selectedCategory === button.text ? 'selected' : ''}`}
+                className={`filter-button ${activeFilters.includes(button.text) ? 'active' : ''}`}
                 onClick={() => handleFilterClick(button.text)}
               >
                 <img 

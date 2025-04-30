@@ -119,7 +119,6 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
   }, [onCurrentLocationUpdate]);
 
   // 필터 변경 감지 및 마커 업데이트
-
   useEffect(() => {
     if (!mapService.current || !markerService.current || !isMapReady) return;
 
@@ -130,32 +129,44 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
       lng: center.lng()
     };
     
-    // 이전 상태와 현재 상태를 비교하여 변경된 필터만 처리
-    const currentFiltersSet = new Set(activeFilters);
-    // 제거된 필터 처리
+    console.log('필터 상태 변경:', activeFilters);
+    
+    // 모든 이전 마커를 제거하고 새로운 마커만 추가하는 방식으로 변경
+    // 먼저 현재 표시된 모든 카테고리의 마커를 제거
     [...prevActiveFilters.current].forEach(filter => {
-      if (!currentFiltersSet.has(filter)) {
-        markerService.current.removeMarkers(filter);
-      }
+      console.log(`${filter} 마커 제거 중...`);
+      markerService.current.removeMarkers(filter);
     });
-    // 새로운 필터에 대해 getPlacesForFilter 호출
-    activeFilters.forEach(async (filter) => {
-      if (!prevActiveFilters.current.has(filter)) {
-        try {
-          console.log(`${filter} 데이터 요청 중...`);
-          const places = await getPlacesForFilter(filter, currentLocation);
-          if (places && places.length > 0) {
-            console.log(`${filter} ${places.length}개 발견`);
-            markerService.current.toggleMarkers(mapInstance, places, filter);
-          } else {
-            console.log(`주변에 ${filter} 데이터가 없습니다.`);
+    
+    // 그 다음 새로운 활성화된 필터의 마커만 추가
+    const addMarkerPromises = [];
+    
+    activeFilters.forEach(filter => {
+      console.log(`${filter} 마커 추가 중...`);
+      // Promise 배열에 추가
+      addMarkerPromises.push(
+        (async () => {
+          try {
+            const places = await getPlacesForFilter(filter, currentLocation);
+            if (places && places.length > 0) {
+              console.log(`${filter} ${places.length}개 발견`);
+              await markerService.current.toggleMarkers(mapInstance, places, filter);
+            } else {
+              console.log(`주변에 ${filter} 데이터가 없습니다.`);
+            }
+          } catch (error) {
+            console.error(`Error fetching places for ${filter}:`, error);
           }
-        } catch (error) {
-          console.error(`Error fetching places for ${filter}:`, error);
-        }
-      }
+        })()
+      );
     });
-    prevActiveFilters.current = currentFiltersSet;
+    
+    // 모든 마커 추가 작업이 완료된 후 상태 업데이트
+    Promise.all(addMarkerPromises).then(() => {
+      // 현재 활성화된 필터 상태 저장
+      prevActiveFilters.current = new Set(activeFilters);
+    });
+    
   }, [activeFilters, isMapReady]);
 
   return <div ref={mapRef} style={{ width: '100%', height: '100%' }} />;

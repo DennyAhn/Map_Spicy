@@ -18,8 +18,11 @@ class MarkerService {
 
     return new Promise((resolve) => {
       this.toggleTimeout = setTimeout(() => {
+        console.log(`마커 토글: ${category}, 장소 수: ${places.length}`);
+        
         // 이미 해당 카테고리의 마커가 있다면 모두 제거
         if (this.markers.has(category)) {
+          console.log(`기존 마커 제거: ${category}`);
           const markers = this.markers.get(category);
           
           // 한 번에 모든 마커와 정보창 제거
@@ -35,11 +38,10 @@ class MarkerService {
           });
 
           this.markers.delete(category);
-          resolve(false);
-          return;
         }
 
         // 새로운 마커 일괄 생성 및 추가
+        console.log(`새 마커 생성: ${category}, 장소 수: ${places.length}`);
         const newMarkers = places.map(place => {
           const marker = this.createMarker(mapInstance, place, category);
           const infoWindow = this.createInfoWindow(mapInstance, place, category);
@@ -50,6 +52,7 @@ class MarkerService {
 
         // 마커 일괄 추가
         this.markers.set(category, newMarkers);
+        console.log(`마커 토글 완료: ${category}, 생성된 마커 수: ${newMarkers.length}`);
         resolve(true);
       }, 10); // 디바운스 시간을 10ms로 줄임
     });
@@ -183,8 +186,11 @@ class MarkerService {
 
   // 마커 제거 메서드
   removeMarkers(category) {
+    console.log(`카테고리 마커 제거 요청: ${category}`);
+    
     if (this.markers.has(category)) {
       const markers = this.markers.get(category);
+      console.log(`제거할 마커 수: ${markers.length}`);
       
       // 정보창 일괄 제거
       if (this.activeInfoWindow) {
@@ -198,7 +204,13 @@ class MarkerService {
         marker.setMap(null);
       });
 
+      // 맵에서 카테고리 제거
       this.markers.delete(category);
+      console.log(`카테고리 마커 제거 완료: ${category}`);
+      return true;
+    } else {
+      console.log(`제거할 마커 없음: ${category}`);
+      return false;
     }
   }
 
