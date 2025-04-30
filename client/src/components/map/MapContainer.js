@@ -229,7 +229,7 @@ const MapContainer = ({
           console.log(`리스트 패널 데이터 설정: ${data.length}개 항목`);
           setListPanelData(data);
         } else {
-          // API 실패 시 기본 데이터 표시 (개발 중에만 사용)
+          // API 실패 시 기본 데이터 표시
           console.log(`${filterText}에 대한 데이터가 없습니다. 기본 메시지 표시`);
           const fallbackData = [
             { 
