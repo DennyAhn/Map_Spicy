@@ -15,6 +15,7 @@ import AboutPage from './components/pages/AboutPage';
 import TermsPage from './components/pages/TermsPage';
 import SupportPage from './components/pages/SupportPage';
 import AdminPage from './components/pages/AdminPage';
+import AdminDangerMap from './components/pages/AdminDangerMap';
 
 import RiskReportPage from './components/pages/RiskReportPage';
 import SuggestTabsPage from "./components/pages/SuggestTabPage";
@@ -164,6 +165,7 @@ const App = () => {
           <Route path="/suggest" element={<SuggestionsPage />} />
           {/* 관리자 페이지 */}
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin/danger-map" element={<AdminDangerMap />} />
 
           {/* 새 페이지 추가 */}
           <Route path="/about" element={<AboutPage />} />
