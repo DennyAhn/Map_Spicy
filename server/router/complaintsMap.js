@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
   try {
     const [rows] = await db.query(
       // ✅ reason 필드 추가
-      'SELECT reason, start_lat, start_lng, end_lat, end_lng, route_coords, reason FROM complaintsmap'
+      'SELECT category, start_lat, start_lng, end_lat, end_lng, route_coords, reason FROM complaintsmap'
     );
     res.json(rows);
   } catch (error) {

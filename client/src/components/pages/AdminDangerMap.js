@@ -133,15 +133,11 @@ const AdminDangerMapPage = () => {
         {/* ✅ reason 리스트 출력 */}
         <div style={{ marginTop: '40px' }}>
           <h2 style={{ margin: '30px 0 10px 0' }}>📝 경로 기반 민원 내용</h2>
-          <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
-            {paths.map((item, idx) => (
-              <li key={idx} style={{
-                borderBottom: '1px solid #eee',
-                padding: '10px 0',
-                color: '#333',
-                fontSize: '14px'
-              }}>
-                {item.reason || '내용 없음'}
+          <ul className={styles['admin-complaint-list']}>
+            {paths.slice(0, 10).map((item, idx) => (
+              <li key={idx} className={styles['admin-complaint-item']}>
+                <p className={styles['admin-complaint-title']}>{item.reason || '제목 없음'}</p>
+                <p className={styles['admin-complaint-meta']}>{item.category} | {item.created_at}</p>
               </li>
             ))}
           </ul>
