@@ -406,9 +406,6 @@ const MapContainer = ({
                           {item.address}
                         </p>
                       )}
-                      {item.visitors && (
-                        <p className="list-item-visitors">방문자 리뷰 {item.visitors}</p>
-                      )}
                       {item.phone && item.phone !== '' && (
                         <p className="list-item-phone">전화: {item.phone}</p>
                       )}

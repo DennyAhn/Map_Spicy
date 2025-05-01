@@ -88,7 +88,6 @@ const convenienceStoreService = {
           distance: distance,                         // 현재 위치에서의 거리
           phone: place.phone || '',                   // 전화번호 (있을 경우)
           category: place.category_name || '편의점',    // 카테고리
-          visitors: String(visitors),                 // 방문자 수 (편의점에만 추가)
           latitude: parseFloat(place.y),              // 위도
           longitude: parseFloat(place.x)              // 경도
 
