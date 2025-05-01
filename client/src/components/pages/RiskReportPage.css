@@ -1,41 +1,17 @@
-/* src/components/pages/test.css */
-
-.test-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  font-family: 'Arial', sans-serif;
-  text-align: center;
+.report-container {
+  width: 100%;
   height: 100%;
-  overflow-y: auto; 
-  box-sizing: border-box;
-  position: relative;
+  background: #fff;
+  overflow-y: auto; /* 세로 스크롤 활성화 */
 }
 
-.test-back-button {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  background: none;
-  border: none;
-  color: #3498db;
-  font-size: 1rem;
-  cursor: pointer;
-  text-align: left;
-  z-index: 10;
-}
-
-.test-back-button:hover {
-  text-decoration: underline;
-}
-
-.test-title {
+.report-title {
   font-size: 2rem;
   color: #e74c3c;
   margin-bottom: 1rem;
 }
 
-.test-info-box {
+.report-info-box {
   background-color: #fdfdfd;
   border-left: 4px solid #e74c3c;
   padding: 1rem;
@@ -44,18 +20,18 @@
   text-align: left;
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
-.test-info-box h2 {
+.report-info-box h2 {
   margin-bottom: 0.5rem;
   color: #c0392b;
 }
-.test-info-box p {
+.report-info-box p {
   color: #555;
   font-size: 0.95rem;
   line-height: 1.5;
 }
 
-.test-open-map-btn,
-.test-submit-btn {
+.report-open-map-btn,
+.report-submit-btn {
   padding: 12px 25px;
   font-size: 1rem;
   border: none;
@@ -67,20 +43,20 @@
   margin: 0.5rem;
 }
 
-.test-submit-btn {
+.report-submit-btn {
   background-color: #27ae60;
 }
 
-.test-open-map-btn:hover,
-.test-submit-btn:hover {
+.report-open-map-btn:hover,
+.report-submit-btn:hover {
   opacity: 0.9;
 }
 
-.test-map-section {
+.report-map-section {
   margin-top: 2rem;
 }
 
-.test-map {
+.report-map {
   width: 100%;
   height: 400px;
   background-color: #f0f0f0;
@@ -91,7 +67,7 @@
   overflow: hidden;
 }
 
-.test-map-text {
+.report-map-text {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -101,19 +77,19 @@
   pointer-events: none;
 }
 
-.test-marker {
+.report-marker {
   position: absolute;
   font-size: 30px;
   pointer-events: none;
 }
 
-.test-instruction {
+.report-instruction {
   margin-top: 1rem;
   font-size: 1rem;
   color: #2c3e50;
 }
 
-.test-reset-btn {
+.report-reset-btn {
   margin-top: 0.8rem;
   margin-left: 10px;
   padding: 12px 25px;
@@ -127,11 +103,11 @@
   transition: background-color 0.3s ease;
 }
 
-.test-reset-btn:hover {
+.report-reset-btn:hover {
   background-color: #95a5a6;
 }
 
-.test-result-box {
+.report-result-box {
   margin-top: 2rem;
   padding: 1rem;
   background-color: #ecf0f1;
@@ -140,7 +116,37 @@
   font-size: 0.95rem;
 }
 
-.test-result-box h3 {
+.report-result-box h3 {
   color: #27ae60;
   margin-bottom: 0.5rem;
+}
+
+.map-popup-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.map-popup-box {
+  width: 90%;
+  max-width: 600px;
+  height: 500px;
+  background: white;
+  border-radius: 8px;
+  position: relative;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.select-map {
+  flex: 1;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }

@@ -24,10 +24,9 @@ const MenuPanel = ({ isOpen, onClose }) => {
             <h3>메뉴</h3>
             <ul>
               <li onClick={() => { navigate('/about'); onClose(); }}>🚀 서비스 소개</li>
-              <li onClick={() => { navigate('/suggest'); onClose(); }}>📢 건의함</li>
+              <li onClick={() => { navigate('/tabpage'); onClose(); }}>📢 건의함</li>
               <li onClick={() => { navigate('/terms'); onClose(); }}>📜 설명문</li>
               <li onClick={() => { navigate('/support'); onClose(); }}>📞 고객센터</li>
-              <li onClick={() => { navigate('/test'); onClose(); }}>📞 test</li>
             </ul>
           </div>
         </div>

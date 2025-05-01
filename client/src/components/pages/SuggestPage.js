@@ -1,5 +1,5 @@
 // src/pages/SuggestPage.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './SuggestPage.css';
@@ -7,6 +7,8 @@ import './SuggestPage.css';
 const SuggestPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const mapRef = useRef(null);
+  const [mapVisible, setMapVisible] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -19,7 +21,64 @@ const SuggestPage = () => {
 
   const [submitted, setSubmitted] = useState(false);
 
-  // 페이지 진입 시 sessionStorage에 저장된 값 불러오기
+  useEffect(() => {
+    if (!mapVisible || !window.naver || !mapRef.current) return;
+  
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+  
+        const map = new window.naver.maps.Map(mapRef.current, {
+          center: new window.naver.maps.LatLng(latitude, longitude),
+          zoom: 16,
+        });
+  
+        new window.naver.maps.Marker({
+          position: new window.naver.maps.LatLng(latitude, longitude),
+          map,
+          icon: {
+            content: `
+              <div style="width: 18px; height: 18px;">
+                <img src="/images/RouteSelectionScreen/user.png"
+                     style="width: 100%; height: 100%; object-fit: contain;" />
+              </div>
+            `,
+            anchor: new window.naver.maps.Point(9, 9),
+          }
+        });
+  
+        window.naver.maps.Event.addListener(map, 'click', function (e) {
+          const latlng = e.coord;
+  
+          window.naver.maps.Service.reverseGeocode({
+            coords: latlng,
+            orders: window.naver.maps.Service.OrderType.ADDR
+          }, (status, response) => {
+            if (status !== window.naver.maps.Service.Status.OK) {
+              console.log('주소를 가져오지 못했습니다.');
+              return;
+            }
+  
+            const result = response.v2.address;
+            const address = result.roadAddress || result.jibunAddress || `${latlng.lat()}, ${latlng.lng()}`;
+  
+            setFormData(prev => ({
+              ...prev,
+              location: address
+            }));
+  
+            setMapVisible(false);
+          });
+        });
+      },
+      (err) => {
+        console.error('현재 위치 오류:', err);
+      }
+    );
+  }, [mapVisible]);
+  
+
+  // 기존 sessionStorage 연동
   useEffect(() => {
     const savedForm = sessionStorage.getItem('suggestForm');
     if (savedForm) {
@@ -27,19 +86,16 @@ const SuggestPage = () => {
     }
   }, []);
 
-  // formData가 변경될 때마다 sessionStorage에 저장
   useEffect(() => {
     sessionStorage.setItem('suggestForm', JSON.stringify(formData));
   }, [formData]);
 
-  // SearchScreen에서 돌아온 경우 주소 값 반영
   useEffect(() => {
     if (location.state?.selectedAddress || location.state?.originalForm) {
       const mergedData = {
-        ...(location.state.originalForm || {}), // 원본 데이터
-        location: location.state.selectedAddress || '' // 새 주소
+        ...(location.state.originalForm || {}),
+        location: location.state.selectedAddress || ''
       };
-      
       setFormData(mergedData);
       sessionStorage.setItem('suggestForm', JSON.stringify(mergedData));
     }
@@ -49,7 +105,7 @@ const SuggestPage = () => {
     e.preventDefault();
 
     if (!formData.title || !formData.description || !formData.category) {
-      alert('제목, 설명, 유형은 필수 입력입니다.');
+      console.log('제목, 설명, 유형은 필수 입력입니다.');
       return;
     }
 
@@ -64,7 +120,6 @@ const SuggestPage = () => {
       console.log('전처리 결과:', response.data.keywords);
       setSubmitted(true);
 
-      // 🔸 제출 후 입력 및 저장 초기화
       setFormData({
         title: '',
         category: '',
@@ -75,12 +130,10 @@ const SuggestPage = () => {
       });
       sessionStorage.removeItem('suggestForm');
 
-      alert('건의사항이 정상적으로 접수되었습니다.');
+      console.log('건의사항이 정상적으로 접수되었습니다.');
     } catch (error) {
       console.error('건의 제출 중 오류:', error);
-      console.error('응답 상태 코드:', error.response?.status);
-      console.error('응답 데이터:', error.response?.data);
-      alert('건의 제출에 실패했습니다.');
+      console.log('건의 제출에 실패했습니다.');
     }
   };
 
@@ -92,17 +145,12 @@ const SuggestPage = () => {
 
   return (
     <div className="suggest-container">
-      <button className="back-button-suggest" onClick={() => navigate('/')}>
-        ←
-      </button>
-
       <div className="suggest-header">
         <h1>📢 시설물 파손 건의</h1>
         <p>발견하신 시설물 문제를 신속하게 해결할 수 있도록 도와주세요</p>
       </div>
 
       <form onSubmit={handleSubmit} className="suggest-form">
-        {/* 제목 입력 */}
         <div className="form-section">
           <label>제목 (필수)</label>
           <input
@@ -114,7 +162,6 @@ const SuggestPage = () => {
           />
         </div>
 
-        {/* 유형 선택 */}
         <div className="form-section">
           <label>유형 선택 (필수)</label>
           <div className="category-grid">
@@ -131,30 +178,21 @@ const SuggestPage = () => {
           </div>
         </div>
 
-        {/* 위치 입력 */}
         <div className="form-section">
           <label>위치 정보 (선택)</label>
           <div className="location-input">
             <input
               type="text"
-              placeholder="주소 또는 건물명 검색"
+              placeholder="지도를 통해 도로명 주소를 입력해주세요"
               value={formData.location}
               readOnly
-              // 위치 입력 필드 onClick 핸들러 수정
-              onClick={() => navigate('/search', { 
-                state: { 
-                  fromSuggestPage: true,
-                  originalForm: formData  // 현재까지 입력된 모든 데이터 전달
-                } 
-              })}
             />
-            <button type="button" className="map-btn">
-              🗺️ 지도에서 위치 지정
+            <button type="button" className="map-btn" onClick={() => setMapVisible(true)}>
+              🗺️ 위치 선택
             </button>
           </div>
         </div>
 
-        {/* 상세 설명 */}
         <div className="form-section">
           <label>상세 설명 (필수)</label>
           <textarea
@@ -166,7 +204,6 @@ const SuggestPage = () => {
           />
         </div>
 
-        {/* 사진 업로드 */}
         <div className="form-section">
           <label>사진 첨부 (최대 5장)</label>
           <div className="photo-upload">
@@ -198,6 +235,15 @@ const SuggestPage = () => {
           </div>
         )}
       </form>
+
+      {mapVisible && (
+        <div className="map-popup-overlay">
+          <div className="map-popup-box">
+            <button className="close-map-btn" onClick={() => setMapVisible(false)}>✖ 닫기</button>
+            <div ref={mapRef} className="select-map"></div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

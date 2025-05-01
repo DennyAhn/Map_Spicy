@@ -1,0 +1,52 @@
+.suggest-tabs-container {
+    height: 100vh; /* 전체 화면 높이로 설정 */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .report-back-button {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    margin-left: 1rem;
+    background: none;
+    border: none;
+    color: #3498db;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: left;
+    z-index: 10;
+  }
+  
+  .report-back-button:hover {
+    text-decoration: underline;
+  }
+  
+  .tab-buttons {
+    display: flex;
+    justify-content: center;
+    margin: 0.5rem;
+    padding-top: 1.5rem;
+  }
+  
+  .tab-buttons button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: none;
+    cursor: pointer;
+  }
+  
+  .tab-buttons button.active {
+    border-bottom: 2px solid #3498db;
+    color: #3498db;
+    font-weight: bold;
+  }
+  
+  .tab-content {
+    flex: 1; /* 남은 공간을 차지하도록 설정 */
+    max-height: calc(100vh - 60px); /* 탭 버튼 높이(약 60px)만큼 빼고 설정 */
+    overflow-y: auto; /* 세로 스크롤 활성화 */
+    padding: 1rem; /* 내부 여백 추가 (선택 사항) */
+  }
