@@ -56,6 +56,7 @@ const MapContainer = ({
 
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
 
+
   // API에서 데이터 가져오기
   const fetchCategoryData = async (category) => {
     setIsLoading(true);
@@ -244,11 +245,15 @@ const MapContainer = ({
         console.error(`필터 데이터 가져오기 실패: ${err.message}`);
         setError(err.message);
       }
+
     }
   };
+  
+    
 
   const handleMoveToCurrent = () => {
     setIsLocationButtonActive(true);
+  
     if (mapServiceRef.current?.moveToCurrentLocation) {
       mapServiceRef.current.moveToCurrentLocation();
     }
@@ -356,6 +361,7 @@ const MapContainer = ({
         onClick={handleMoveToCurrent}
       >
         <img src="/images/RouteSelectionScreen/location.svg" alt="현재 위치로 이동" />
+        
       </button>
 
       {/* 카테고리 리스트 패널 */}

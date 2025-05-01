@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend } from 'chart.js';
 import axios from 'axios';
-import './AdminPage.css';
+import styles from './AdminPage.module.css'; // ✅ 수정된 모듈 스타일
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend);
 
@@ -124,117 +124,118 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="admin-container">
-      <h1 className="admin-title">📊 관리자 페이지</h1>
+    <div className={styles['admin-wrapper']}>
+      <div className={styles['admin-container']}>
+        <h1 className={styles['admin-title']}>📊 관리자 페이지</h1>
 
-      <div className="admin-filter-bar">
-        <div className="admin-filter-group">
-          <label>카테고리</label>
-          <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
-            {['전체', '엘리베이터', '계단', '도로', '조명', '난간', '기타'].map(opt => <option key={opt}>{opt}</option>)}
-          </select>
-        </div>
+        <div className={styles['admin-filter-bar']}>
+          <div className={styles['admin-filter-group']}>
+            <label>카테고리</label>
+            <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
+              {['전체', '엘리베이터', '계단', '도로', '조명', '난간', '기타'].map(opt => <option key={opt}>{opt}</option>)}
+            </select>
+          </div>
 
-        {/* ✅ 커스텀 지역 드롭다운 */}
-        <div className="filter-group custom-dropdown">
-          <label>지역</label>
-          <div
-            className="dropdown-wrapper"
-            onMouseEnter={() => {
-              if (closeTimeout) {
-                clearTimeout(closeTimeout);
-                setCloseTimeout(null);
-              }
-            }}
-            onMouseLeave={() => {
-              const timeout = setTimeout(() => {
-                setHoveredRegion(null);
-                setDropdownOpen(false);
-              }, 1000);
-              setCloseTimeout(timeout);
-            }}
-          >
-
-            <div className="dropdown-toggle" onClick={() => setDropdownOpen(!dropdownOpen)}>
-              {selectedRegion}
-            </div>
-
-            {dropdownOpen && (
-              <div className="dropdown-menu">
-                {Object.keys(regions).map(region => (
-                  <div
-                    key={region}
-                    className="dropdown-item"
-                    onMouseEnter={() => setHoveredRegion(region)}
-                    onClick={() => {
-                      if (region !== '달서구') {
-                        setSelectedRegion(region);
-                        setDropdownOpen(false);
-                      }
-                    }}
-                  >
-                    {region}
-                    {hoveredRegion === '달서구' && region === '달서구' && (
-                      <div className="sub-dropdown">
-                        {regions['달서구'].map(sub => (
-                          <div
-                            key={sub}
-                            className="sub-dropdown-item"
-                            onClick={() => {
-                              setSelectedRegion(sub);
-                              setDropdownOpen(false);
-                            }}
-                          >
-                            {sub}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
+          <div className={`${styles['admin-filter-group']} ${styles['admin-custom-dropdown']}`}>
+            <label>지역</label>
+            <div
+              className={styles['admin-dropdown-wrapper']}
+              onMouseEnter={() => {
+                if (closeTimeout) {
+                  clearTimeout(closeTimeout);
+                  setCloseTimeout(null);
+                }
+              }}
+              onMouseLeave={() => {
+                const timeout = setTimeout(() => {
+                  setHoveredRegion(null);
+                  setDropdownOpen(false);
+                }, 1000);
+                setCloseTimeout(timeout);
+              }}
+            >
+              <div className={styles['admin-dropdown-toggle']} onClick={() => setDropdownOpen(!dropdownOpen)}>
+                {selectedRegion}
               </div>
-            )}
+
+              {dropdownOpen && (
+                <div className={styles['admin-dropdown-menu']}>
+                  {Object.keys(regions).map(region => (
+                    <div
+                      key={region}
+                      className={styles['admin-dropdown-item']}
+                      onMouseEnter={() => setHoveredRegion(region)}
+                      onClick={() => {
+                        if (region !== '달서구') {
+                          setSelectedRegion(region);
+                          setDropdownOpen(false);
+                        }
+                      }}
+                    >
+                      {region}
+                      {hoveredRegion === '달서구' && region === '달서구' && (
+                        <div className={styles['admin-sub-dropdown']}>
+                          {regions['달서구'].map(sub => (
+                            <div
+                              key={sub}
+                              className={styles['admin-sub-dropdown-item']}
+                              onClick={() => {
+                                setSelectedRegion(sub);
+                                setDropdownOpen(false);
+                              }}
+                            >
+                              {sub}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className={styles['admin-filter-group']}>
+            <label>위험도</label>
+            <select value={selectedDanger} onChange={e => setSelectedDanger(e.target.value)}>
+              {['전체', '위험', '안전'].map(opt => <option key={opt}>{opt}</option>)}
+            </select>
           </div>
         </div>
 
-        <div className="filter-group">
-          <label>위험도</label>
-          <select value={selectedDanger} onChange={e => setSelectedDanger(e.target.value)}>
-            {['전체', '위험', '안전'].map(opt => <option key={opt}>{opt}</option>)}
-          </select>
+        <div className={styles['admin-chart-grid']}>
+          <div className={styles['admin-chart-card']}>
+            <h2 className={styles['admin-chart-title']}>카테고리 차트</h2>
+            <Bar data={categoryData} options={chartOptions} />
+          </div>
+          <div className={styles['admin-chart-card']}>
+            <h2 className={styles['admin-chart-title']}>키워드 차트</h2>
+            <Pie data={keywordData} options={chartOptions} />
+          </div>
         </div>
-      </div>
 
-      <div className="chart-grid">
-        <div className="chart-card">
-          <h2 className="chart-title">카테고리 차트</h2>
-          <Bar data={categoryData} options={chartOptions} />
+        <div className={styles['admin-search-section']}>
+          <h2 className={styles['admin-search-title']}>🔍 민원 검색</h2>
+          <input
+            type="text"
+            className={styles['admin-search-input']}
+            placeholder="제목, 내용, 유형, 키워드 검색..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+          <ul className={styles['admin-complaint-list']}>
+            {filtered.slice(0, 10).map(c => (
+              <li key={c.id} className={styles['admin-complaint-item']}>
+                <p className={styles['admin-complaint-title']}>{c.title}</p>
+                <p className={styles['admin-complaint-meta']}>{c.category} | {c.created_at}</p>
+                <p className={styles['admin-complaint-content']}>{c.content}</p>
+                {c.is_danger === 1 && <p className={styles['admin-complaint-danger']}>⚠️ 위험 민원</p>}
+              </li>
+            ))}
+          </ul>
         </div>
-        <div className="chart-card">
-          <h2 className="chart-title">키워드 차트</h2>
-          <Pie data={keywordData} options={chartOptions} />
-        </div>
-      </div>
 
-      <div className="admin-search-section">
-        <h2 className="admin-search-title">🔍 민원 검색</h2>
-        <input
-          type="text"
-          className="admin-search-input"
-          placeholder="제목, 내용, 유형, 키워드 검색..."
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-        />
-        <ul className="complaint-list">
-          {filtered.slice(0, 10).map(c => (
-            <li key={c.id} className="complaint-item">
-              <p className="complaint-title">{c.title}</p>
-              <p className="complaint-meta">{c.category} | {c.created_at}</p>
-              <p className="complaint-content">{c.content}</p>
-              {c.is_danger === 1 && <p className="complaint-danger">⚠️ 위험 민원</p>}
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );

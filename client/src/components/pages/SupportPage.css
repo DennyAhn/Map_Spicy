@@ -59,6 +59,7 @@
     background: #f8f9fa;
     border-radius: 10px;
     text-align: center;
+    display: block;
   }
   
   .inquiry-form input,
@@ -69,6 +70,12 @@
     border-radius: 6px;
     margin-bottom: 1rem;
     font-size: 1rem;
+  }
+
+  .inquiry-form textarea,
+  .inquiry-form button {
+    display: block;
+    margin: 0 auto 1rem auto;
   }
 
   .inquiry-form input {

@@ -91,6 +91,7 @@ const convenienceStoreService = {
           visitors: String(visitors),                 // 방문자 수 (편의점에만 추가)
           latitude: parseFloat(place.y),              // 위도
           longitude: parseFloat(place.x)              // 경도
+
         };
         
         // 각 장소 데이터 로깅

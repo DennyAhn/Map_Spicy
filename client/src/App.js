@@ -16,6 +16,8 @@ import TermsPage from './components/pages/TermsPage';
 import SupportPage from './components/pages/SupportPage';
 import AdminPage from './components/pages/AdminPage';
 
+import Test from './components/pages/test';
+
 /** 새로운 추적 화면 컴포넌트 */
 import TrackingScreen from "./components/tracking/TrackingScreen";
 
@@ -144,7 +146,6 @@ const App = () => {
             </>
           }/>
 
-          {/* ✅ SearchScreen은 경로 분리 */}
           <Route
             path="/search"
             element={
@@ -165,6 +166,7 @@ const App = () => {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/support" element={<SupportPage />} />
+          <Route path="/test" element={<Test />} />
 
           {/* 실시간 추적 화면 */}
           <Route path="/tracking" element={<TrackingScreen />} />
