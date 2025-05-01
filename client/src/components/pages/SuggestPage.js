@@ -146,7 +146,7 @@ const SuggestPage = () => {
   return (
     <div className="suggest-container">
       <div className="suggest-header">
-        <h1>📢 시설물 파손 건의</h1>
+        <h1>📢 시설물 파손 제보</h1>
         <p>발견하신 시설물 문제를 신속하게 해결할 수 있도록 도와주세요</p>
       </div>
 

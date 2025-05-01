@@ -46,7 +46,7 @@ export async function getPlacesForFilter(filter, currentLocation) {
         rawData = await fetchWomenPlacesData(currentLocation.lat, currentLocation.lng);
         return normalizePlaces(rawData, ['title', 'name']);
 
-      case '심야약국':
+      case '약국':
         rawData = await fetchPharmacyPlacesData(currentLocation.lat, currentLocation.lng);
         return normalizePlaces(rawData, ['pharmacy_name', 'name']);
 

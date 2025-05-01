@@ -16,13 +16,13 @@ const SuggestTabsPage = () => {
           className={activeTab === 'facility' ? 'active' : ''} 
           onClick={() => setActiveTab('facility')}
         >
-          시설물 건의
+          시설물 파손 제보
         </button>
         <button 
           className={activeTab === 'risk' ? 'active' : ''} 
           onClick={() => setActiveTab('risk')}
         >
-          위험군 제보
+          위험경로 제보
         </button>
       </div>
 

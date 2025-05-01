@@ -21,7 +21,7 @@ const filterButtons = {
   ],
   '노약자': [
     { icon: '/images/map/category/ele.png', text: '지하철역 엘리베이터' },
-    { icon: '/images/map/category/drugstore.png', text: '심야약국' },
+    { icon: '/images/map/category/drugstore.png', text: '약국' },
     { icon: '/images/map/category/charge.png', text: '휠체어 충전소' },
     { icon: '/images/map/category/noin.png', text: '복지시설' },
     { icon: '/images/map/category/store.png', text: '편의점' },
@@ -126,7 +126,7 @@ const MapContainer = ({
         '경찰서': '/api/policePlaces',
         '안전비상벨': '/api/womenPlaces',
         'CCTV': '/api/cctvPlaces',
-        '심야약국': '/api/pharmacyPlaces',
+        '약국': '/api/pharmacyPlaces',
         '휠체어 충전소': '/api/wheelChairPlaces',
         '복지시설': '/api/elderlyPlaces',
       };

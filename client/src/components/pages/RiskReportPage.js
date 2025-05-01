@@ -132,10 +132,10 @@ const RiskReportPage = () => {
 
   return (
     <div className="report-container">
-      <h1 className="report-title">⚠️ 위험군 제보</h1>
+      <h1 className="report-title">⚠️ 위험경로 제보</h1>
 
       <div className="report-info-box">
-        <h2>📍 위험 지역을 알려주세요</h2>
+        <h2>📍 위험 경로를 알려주세요</h2>
         <p>두 지점을 선택하고 제보하기를 클릭하면 제보가 완료됩니다.</p>
       </div>
 
@@ -143,7 +143,7 @@ const RiskReportPage = () => {
         <div className="form-section">
           <label>유형 선택 (선택)</label>
           <div className="category-grid">
-            {['CCTV 부실', '가로등 부재', '좁은 길목', '기타'].map((cat) => (
+            {['CCTV 부재', '가로등 부재', '좁은 길목', '보도블럭 파손', '쓰레기 무단 투기','기타'].map((cat) => (
               <button
                 type="button"
                 key={cat}

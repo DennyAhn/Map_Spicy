@@ -291,7 +291,7 @@ class MarkerService {
       '안전비상벨': '/images/icon/women/siren.png',
       'CCTV': '/images/icon/women/cctv.png',
       '지하철역 엘리베이터': '/images/icon/old/ele.png',
-      '심야약국': '/images/icon/old/drugstore.png',
+      '약국': '/images/icon/old/drugstore.png',
       '휠체어 충전소': '/images/icon/old/charge.png',
       '복지시설': '/images/icon/old/noin.png',
       '외국인 주의구역': '/images/icon/normal/warning.png'
@@ -379,7 +379,7 @@ class MarkerService {
           상세 정보 제공 준비 중
         </span>`); 
         break;
-      case '심야약국': 
+      case '약국': 
         items.push(`<span style="display: inline-flex; align-items: center;">
           <svg width="10" height="10" viewBox="0 0 24 24" style="margin-right: 4px;">
             <path fill="#ea4335" d="M6 3h12v2H6zm11 3H7c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-1 9h-2.5v2.5h-3V15H8v-3h2.5V9.5h3V12H16v3z"/>
