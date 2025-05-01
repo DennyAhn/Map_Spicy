@@ -1,3 +1,4 @@
+/* global naver */
 /* NaverMap */
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -128,7 +129,7 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
         navigator.geolocation.clearWatch(watchPositionId.current);
       }
     };
-  }, [onCurrentLocationUpdate]);
+  }, [onCurrentLocationUpdate, mapServiceRef]);
 
   // 필터 변경 감지 및 마커 업데이트
   useEffect(() => {
@@ -180,6 +181,68 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
     });
     
   }, [activeFilters, isMapReady]);
+
+  // 지도 드래그 완료 후 마커 업데이트
+  useEffect(() => {
+    if (!mapService.current || !markerService.current || !isMapReady) return;
+    
+    const mapInstance = mapService.current.getMapInstance();
+    
+    // 지도 드래그 이벤트 리스너 추가
+    const dragendListener = naver.maps.Event.addListener(mapInstance, 'dragend', () => {
+      if (activeFilters.length === 0) return; // 활성화된 필터가 없으면 무시
+      
+      // 지도 중심 위치 가져오기
+      const center = mapInstance.getCenter();
+      const currentLocation = {
+        lat: center.lat(),
+        lng: center.lng()
+      };
+      
+      console.log('지도 이동 완료: 현재 중심 위치', currentLocation);
+      
+      // 활성화된 필터에 대한 마커만 업데이트
+      const updateMarkerPromises = [];
+      
+      activeFilters.forEach(filter => {
+        console.log(`지도 이동 후 ${filter} 마커 업데이트 중...`);
+        // Promise 배열에 추가
+        updateMarkerPromises.push(
+          (async () => {
+            try {
+              // 기존 마커 제거
+              markerService.current.removeMarkers(filter);
+              
+              // 새 위치 기반으로 마커 추가
+              const places = await getPlacesForFilter(filter, currentLocation);
+              if (places && places.length > 0) {
+                console.log(`${filter} ${places.length}개 발견`);
+                await markerService.current.toggleMarkers(mapInstance, places, filter);
+                
+                // 필터 클릭 이벤트 트리거하여 리스트 패널 업데이트
+                if (onFilterClick && activeFilters.length === 1) {
+                  onFilterClick(filter);
+                }
+              } else {
+                console.log(`현재 위치 주변에 ${filter} 데이터가 없습니다.`);
+              }
+            } catch (error) {
+              console.error(`Error updating places for ${filter}:`, error);
+            }
+          })()
+        );
+      });
+      
+      Promise.all(updateMarkerPromises).then(() => {
+        console.log('모든 마커 업데이트 완료');
+      });
+    });
+    
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      naver.maps.Event.removeListener(dragendListener);
+    };
+  }, [activeFilters, isMapReady, onFilterClick]);
 
   return <div ref={mapRef} style={{ width: '100%', height: '100%' }} />;
 };

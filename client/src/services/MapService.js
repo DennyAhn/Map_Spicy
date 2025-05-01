@@ -251,6 +251,22 @@ class MapService {
       );
     }
   }
+
+  // 지도의 현재 중심 위치 가져오기
+  getMapCenter() {
+    if (!this.mapInstance) return null;
+    
+    const center = this.mapInstance.getCenter();
+    return {
+      latitude: center.lat(),
+      longitude: center.lng()
+    };
+  }
+
+  // 현재 사용자 위치 가져오기 (GPS 기반)
+  getCurrentLocation() {
+    return this.lastKnownPosition;
+  }
 }
 
 export default MapService;

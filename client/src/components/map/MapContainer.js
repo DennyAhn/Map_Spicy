@@ -64,19 +64,27 @@ const MapContainer = ({
     console.log(`${category} 데이터 요청 시작...`);
     
     try {
-      // 현재 위치 가져오기
+      // 현재 지도 중심 위치 가져오기 (사용자 GPS 위치 대신)
       let latitude = 35.8533;  // 기본 위치
       let longitude = 128.4897;  // 기본 위치
       
-      if (mapServiceRef.current?.getCurrentLocation) {
-        const currentLocation = mapServiceRef.current.getCurrentLocation();
-        if (currentLocation) {
-          latitude = currentLocation.latitude;
-          longitude = currentLocation.longitude;
+      if (mapServiceRef.current) {
+        // getMapCenter 메서드 호출 - 현재 지도 중심 위치
+        const mapCenter = mapServiceRef.current.getMapCenter();
+        if (mapCenter) {
+          latitude = mapCenter.latitude;
+          longitude = mapCenter.longitude;
+          console.log(`지도 중심 위치: 위도 ${latitude}, 경도 ${longitude}`);
+        } else {
+          // 지도 중심을 가져올 수 없는 경우 GPS 위치 사용 (폴백)
+          const currentLocation = mapServiceRef.current.getCurrentLocation();
+          if (currentLocation) {
+            latitude = currentLocation.latitude;
+            longitude = currentLocation.longitude;
+            console.log(`GPS 위치 사용: 위도 ${latitude}, 경도 ${longitude}`);
+          }
         }
       }
-      
-      console.log(`현재 위치: 위도 ${latitude}, 경도 ${longitude}`);
       
       // 지하철역 엘리베이터 또는 외국인 주의구역인 경우 placesApi에서 직접 데이터 가져오기
       if (category === '지하철역 엘리베이터' || category === '외국인 주의구역') {
