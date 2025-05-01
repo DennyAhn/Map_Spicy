@@ -1,9 +1,11 @@
 // src/pages/AdminPage.js
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend } from 'chart.js';
 import axios from 'axios';
 import styles from './AdminPage.module.css'; // ✅ 수정된 모듈 스타일
+import AdminDangerMap from './AdminDangerMap';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend);
 
@@ -235,7 +237,11 @@ const AdminPage = () => {
             ))}
           </ul>
         </div>
-
+        <div className={styles['admin-button-container']}>
+          <Link to="/admin/danger-map" className={styles['admin-link-button']}>
+            🗺️ 위험 지도 보기
+          </Link>
+        </div>
       </div>
     </div>
   );

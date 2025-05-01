@@ -6,6 +6,12 @@ const axios = require('axios');
 const geocodeRouter = require("./router/geocodeRouter");
 const geocode = require('./router/geocode');
 const directionRouter = require("./router/directionRouter");
+const complaintsRouter = require('./router/complaints');
+const preprocessRouter = require('./router/preprocess');
+const featureIssuesRouter = require('./router/featureIssues');
+const complaintsMapRoutes = require('./router/complaintsMap');
+const routeRegister = require('./router/routeRegister');
+const riskReportSubmitRouter = require('./router/riskReportSubmit');
 
 const policePlacesRouter = require("./router/filter/policePlacesRouter");
 const fireStationRouter = require("./router/filter/fireStationPlacesRouter");
@@ -38,6 +44,12 @@ app.get("/", (req, res) => {
 app.use("/geocode", geocodeRouter);
 app.use('/api/geocode', geocode);
 app.use("/direction", directionRouter);
+app.use('/api/complaints', complaintsRouter);
+app.use('/api/preprocess', preprocessRouter);
+app.use('/api/feature-issues', featureIssuesRouter);
+app.use('/api/complaintsmap', complaintsMapRoutes);
+app.use('/api/router/register', routeRegister);
+app.use('/api/risk-report-submit', riskReportSubmitRouter);
 
 // 필터링된 장소 API 라우터 연결
 app.use('/api/policePlaces', policePlacesRouter);

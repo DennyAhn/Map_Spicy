@@ -11,11 +11,18 @@ const RiskReportPage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [activeLocationField, setActiveLocationField] = useState(null);
 
+  // 주소 입력용
   const [formData, setFormData] = useState({
     category: '',
     location1: '',
     location2: '',
     description: ''
+  });
+
+  // 위도/경도 저장용
+  const [coords, setCoords] = useState({
+    start: null,
+    end: null
   });
 
   useEffect(() => {
@@ -30,7 +37,7 @@ const RiskReportPage = () => {
           zoom: 16,
         });
 
-        // 🔹 현재 위치 마커 표시
+        // 🔹 현재 위치 마커
         new window.naver.maps.Marker({
           position: new window.naver.maps.LatLng(latitude, longitude),
           map,
@@ -45,9 +52,11 @@ const RiskReportPage = () => {
           }
         });
 
-        // 🔹 지도 클릭 이벤트로 좌표 → 주소
+        // 🔹 지도 클릭 시 주소 + 위경도 처리
         window.naver.maps.Event.addListener(map, 'click', function (e) {
           const latlng = e.coord;
+          const lat = latlng.lat();
+          const lng = latlng.lng();
 
           window.naver.maps.Service.reverseGeocode({
             coords: latlng,
@@ -56,11 +65,18 @@ const RiskReportPage = () => {
             if (status !== window.naver.maps.Service.Status.OK) return;
 
             const result = response.v2.address;
-            const address = result.roadAddress || result.jibunAddress || `${latlng.lat()}, ${latlng.lng()}`;
+            const address = result.roadAddress || result.jibunAddress || `${lat}, ${lng}`;
 
+            // 주소 업데이트
             setFormData(prev => ({
               ...prev,
               [activeLocationField]: address
+            }));
+
+            // 좌표 저장
+            setCoords(prev => ({
+              ...prev,
+              [activeLocationField === 'location1' ? 'start' : 'end']: { lat, lng }
             }));
 
             setMapVisible(false);
@@ -83,13 +99,15 @@ const RiskReportPage = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3001/api/preprocess/analyze', {
-        content: formData.description,
+      await axios.post('http://localhost:3001/api/risk-report-submit', {
+        reason: formData.description,
         category: formData.category,
-        location: `${formData.location1} ~ ${formData.location2}`
+        start_lat: coords.start?.lat,
+        start_lng: coords.start?.lng,
+        end_lat: coords.end?.lat,
+        end_lng: coords.end?.lng
       });
 
-      console.log('전처리 결과:', response.data.keywords);
       setSubmitted(true);
 
       setFormData({
@@ -98,6 +116,12 @@ const RiskReportPage = () => {
         location2: '',
         description: ''
       });
+
+      setCoords({
+        start: null,
+        end: null
+      });
+
       sessionStorage.removeItem('suggestForm');
 
       console.log('건의사항이 정상적으로 접수되었습니다.');
