@@ -32,7 +32,7 @@ const filterButtons = {
 };
 
 // API 호출을 위한 기본 URL
-const API_BASE_URL = 'http://localhost:3001'; // 개발 환경에서는 localhost 사용
+const API_BASE_URL = 'http://15.164.94.96:3001'; // 개발 환경에서는 localhost 사용
 
 const MapContainer = ({ 
   selectedMode, 

@@ -1,4 +1,3 @@
-/* global naver */
 /* NaverMap */
 import React, { useEffect, useRef, useState } from 'react';
 

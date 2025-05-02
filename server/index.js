@@ -30,7 +30,7 @@ app.use(express.json());
 app.use(
   cors({
 
-    origin: "http://localhost:3000", // React 앱에서 오는 요청 허용
+    origin: "http://15.164.94.96:3000", // React 앱에서 오는 요청 허용
 
   })
 );

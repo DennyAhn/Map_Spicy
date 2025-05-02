@@ -90,7 +90,6 @@ class MarkerService {
           border: none;
           font-size: 11px;
           margin-bottom: 12px;
-          
         ">
           <div class="close-btn" style="
             position: absolute;
@@ -319,7 +318,6 @@ class MarkerService {
     // 핵심 정보만 표시하도록 간소화
     const items = [];
     
-    // 거리 정보 추가
     if (place.distance) {
       items.push(`<span style="color: #4285f4; font-weight: 500; display: inline-flex; align-items: center;">
         <svg width="10" height="10" viewBox="0 0 24 24" style="margin-right: 4px;">
