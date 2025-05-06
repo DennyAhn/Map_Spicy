@@ -22,7 +22,7 @@ class MapService {
     // 현재 위치 마커 아이콘 정의
     this.currentLocationIcon = {
       content: `<img src="/images/RouteSelectionScreen/user.png" style="width: 16px; height: 16px;" />`,
-      anchor: new naver.maps.Point(20, 20)
+      anchor: new naver.maps.Point(8, 8)
     };
 
     /** 이미지 + 효과 추가
@@ -67,7 +67,7 @@ class MapService {
           }
         </style>
       `,
-      anchor: new naver.maps.Point(20, 20)
+      anchor: new naver.maps.Point(8, 8)
     };
     */
 
