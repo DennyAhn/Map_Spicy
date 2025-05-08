@@ -2,59 +2,44 @@
 
 class MarkerService {
   constructor() {
-    this.markers = new Map(); // 카테고리별 마커 저장
-    this.activeInfoWindow = null; // 현재 열린 정보창 저장
-    this.infoWindows = new Map(); // 마커별 정보창 캐시
-    this.clickTimeout = null; // 클릭 디바운스를 위한 타이머
-    this.addressCache = new Map(); // 주소 캐시 추가
+    this.markers = new Map();
+    this.activeInfoWindow = null;
+    this.infoWindows = new Map();
+    this.clickTimeout = null;
+    this.addressCache = new Map();
   }
 
-  // 마커 추가/제거 토글 메서드
   toggleMarkers(mapInstance, places, category) {
-    // 디바운스 처리
     if (this.toggleTimeout) {
       clearTimeout(this.toggleTimeout);
     }
 
     return new Promise((resolve) => {
       this.toggleTimeout = setTimeout(() => {
-        console.log(`마커 토글: ${category}, 장소 수: ${places.length}`);
-        
-        // 이미 해당 카테고리의 마커가 있다면 모두 제거
         if (this.markers.has(category)) {
-          console.log(`기존 마커 제거: ${category}`);
           const markers = this.markers.get(category);
-          
-          // 한 번에 모든 마커와 정보창 제거
           if (this.activeInfoWindow) {
             this.activeInfoWindow.close();
             this.activeInfoWindow = null;
           }
-
-          // 마커 일괄 제거
           markers.forEach(marker => {
             this.infoWindows.delete(marker);
             marker.setMap(null);
           });
-
           this.markers.delete(category);
         }
 
-        // 새로운 마커 일괄 생성 및 추가
-        console.log(`새 마커 생성: ${category}, 장소 수: ${places.length}`);
         const newMarkers = places.map(place => {
           const marker = this.createMarker(mapInstance, place, category);
           const infoWindow = this.createInfoWindow(mapInstance, place, category);
           this.infoWindows.set(marker, infoWindow);
-          this.addMarkerClickEvent(marker, infoWindow, mapInstance);
+          this.addMarkerClickEvent(marker, infoWindow, mapInstance, place, category);
           return marker;
         });
 
-        // 마커 일괄 추가
         this.markers.set(category, newMarkers);
-        console.log(`마커 토글 완료: ${category}, 생성된 마커 수: ${newMarkers.length}`);
         resolve(true);
-      }, 10); // 디바운스 시간을 10ms로 줄임
+      }, 10);
     });
   }
 
@@ -153,7 +138,6 @@ class MarkerService {
       disableAnchor: true,
       backgroundColor: 'transparent',
       borderColor: 'transparent',
-      pixelOffset: new naver.maps.Point(0, -45),
       zIndex: 100,
       closeButton: false
     });
@@ -211,20 +195,19 @@ class MarkerService {
   }
 
   // 마커 클릭 이벤트 추가 메서드
-  addMarkerClickEvent(marker, infoWindow, mapInstance) {
+  addMarkerClickEvent(marker, infoWindow, mapInstance, place, category) {
     let clickCount = 0;
     let clickTimer = null;
-
+  
+    // 최초 클릭 여부를 마커에 저장
+    marker.__firstClicked = false;
+  
     naver.maps.Event.addListener(marker, 'click', () => {
       clickCount++;
-      
-      if (clickTimer) {
-        clearTimeout(clickTimer);
-      }
-
-      clickTimer = setTimeout(() => {
+      if (clickTimer) clearTimeout(clickTimer);
+  
+      clickTimer = setTimeout(async () => {
         if (clickCount === 1) {
-          // 단일 클릭
           if (this.activeInfoWindow === infoWindow) {
             infoWindow.close();
             this.activeInfoWindow = null;
@@ -232,14 +215,51 @@ class MarkerService {
             if (this.activeInfoWindow) {
               this.activeInfoWindow.close();
             }
+  
+            const uniqueId = `place-info-${place.latitude}-${place.longitude}`.replace(/\./g, '-');
+            const address = await this.loadKoreanAddress(place.latitude, place.longitude);
+            const infoContent = document.getElementById(uniqueId);
+            if (infoContent) {
+              infoContent.innerHTML = this.getKoreanPlaceInfo(category, place, address);
+            }
+  
+            // 최초 클릭이면 살짝 위로 이동시켜서 표시
+            if (!marker.__firstClicked) {
+              infoWindow.setOptions({
+                pixelOffset: new naver.maps.Point(0, -43)
+              });
+              marker.__firstClicked = true;
+            } else {
+              infoWindow.setOptions({
+                pixelOffset: new naver.maps.Point(0, 0)
+              });
+            }
             infoWindow.open(mapInstance, marker);
+
             this.activeInfoWindow = infoWindow;
           }
         }
         clickCount = 0;
       }, 200);
     });
+  
+    // close 버튼은 기존과 동일
+    naver.maps.Event.addListener(infoWindow, 'domready', () => {
+      const container = infoWindow.getElement();
+      if (!container) return;
+    
+      const closeBtn = container.querySelector('.close-btn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          infoWindow.close();
+          this.activeInfoWindow = null;
+        });
+      }
+    });
   }
+  
+
 
   // 마커 제거 메서드
   removeMarkers(category) {
