@@ -99,7 +99,7 @@ const RiskReportPage = () => {
     }
 
     try {
-      await axios.post('http://localhost:3001/api/risk-report-submit', {
+      await axios.post('http://15.164.94.96:3001/api/risk-report-submit', {
         reason: formData.description,
         category: formData.category,
         start_lat: coords.start?.lat,

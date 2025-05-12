@@ -9,7 +9,7 @@ router.post('/analyze', async (req, res) => {
   console.log('[민원 등록 요청 도착]', { title, content, category, location });
 
   try {
-    const response = await axios.post('http://localhost:5001/preprocess', { content });
+    const response = await axios.post('http://15.164.94.96:5001/preprocess', { content });
     console.log('[Flask 전처리 응답]', response.data);
 
     const keywords = response.data.keywords;

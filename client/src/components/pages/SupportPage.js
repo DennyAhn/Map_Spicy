@@ -11,15 +11,15 @@ const SupportPage = () => {
   const [inquiryContent, setInquiryContent] = useState('');
 
   const faqList = [
-    { question: '경로 검색 방법은?', answer: '출발지와 도착지를 선택하면...' },
-    { question: '제보는 어떻게 하나요?', answer: '건의함 메뉴에서...' }
+    { question: '경로 검색 방법은?', answer: '메인 화면에서 카테고리 버튼을 통해 본인에게 맞는 카테고리를 선택한 뒤, 출발지와 도착지를 선택하면 일반, 안전 경로가 제공됩니다.' },
+    { question: '제보는 어떻게 하나요?', answer: '메인 화면의 좌측 패널을 이용하여 건의 함으로 이동 후 상단의 버튼을 통해 시설물 파손, 위험 경로 제보 중 선택하여 제보할 수 있습니다.' }
   ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.post('http://localhost:3001/api/feature-issues', {
+      await axios.post('http://15.164.94.96:3001/api/feature-issues', {
         title: inquiryType,
         content: inquiryContent
       });

@@ -110,7 +110,7 @@ const SuggestPage = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3001/api/preprocess/analyze', {
+      const response = await axios.post('http://15.164.94.96:3001/api/preprocess/analyze', {
         title: formData.title,
         content: formData.description,
         category: formData.category,
