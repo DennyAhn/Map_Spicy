@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '../../config/api';
+
 export const fetchWomenPlacesData = async (lat, lng) => {
   try {
     // 위치 정보를 쿼리 파라미터로 추가
@@ -6,9 +8,7 @@ export const fetchWomenPlacesData = async (lat, lng) => {
       lng: lng
     });
     
-    const PROXY_URL = 'http://15.164.94.96:3001';
-
-    const response = await fetch(`${PROXY_URL}/api/womenPlaces?${params}`);
+    const response = await fetch(`${API_BASE_URL}/api/womenPlaces?${params}`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch women places: ${response.status}`);

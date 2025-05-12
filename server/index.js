@@ -29,9 +29,12 @@ app.use(express.json());
 // CORS 설정
 app.use(
   cors({
-
-    origin: "http://15.164.94.96:3000", // React 앱에서 오는 요청 허용
-
+    origin: [
+      "http://15.164.94.96:3000", 
+      "http://localhost:3000", // 로컬 작업용
+      "https://map-cap-client.vercel.app"
+    ],
+    credentials: true
   })
 );
 
@@ -60,8 +63,6 @@ app.use('/api/elderlyPlaces', elderlyPlacesRouter);
 app.use('/api/pharmacyPlaces', pharmacyPlacesRouter);
 app.use('/api/cctvPlaces', cctvPlaceRouter);
 app.use('/api/wheelChairPlaces', wheelChairPlacesRouter);
-
-app.use(cors());
 
 // API 키 확인 로그
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;

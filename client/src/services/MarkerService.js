@@ -60,6 +60,7 @@ class MarkerService {
   // 정보창 생성 메서드
   createInfoWindow(mapInstance, place, category) {
     const uniqueId = `place-info-${place.latitude}-${place.longitude}`.replace(/\./g, '-');
+    const closeButtonId = `close-btn-${place.latitude}-${place.longitude}`.replace(/\./g, '-');
     
     const infoWindow = new naver.maps.InfoWindow({
       content: `
@@ -76,7 +77,7 @@ class MarkerService {
           font-size: 11px;
           margin-bottom: 12px;
         ">
-          <div class="close-btn" style="
+          <div id="${closeButtonId}" class="close-btn" style="
             position: absolute;
             top: 4px;
             right: 4px;
@@ -93,6 +94,7 @@ class MarkerService {
             line-height: 1;
             z-index: 1;
             transition: all 0.2s ease;
+            pointer-events: auto;
           ">&times;</div>
           <div style="
             position: absolute;
@@ -142,16 +144,52 @@ class MarkerService {
       closeButton: false
     });
 
-    // 닫기 버튼 이벤트 추가
-    naver.maps.Event.addListener(infoWindow, 'domready', () => {
-      const closeButtons = document.getElementsByClassName('close-btn');
-      if (closeButtons && closeButtons.length > 0) {
-        const closeBtn = closeButtons[closeButtons.length - 1]; // 가장 최근에 생성된 버튼
-        closeBtn.addEventListener('click', () => {
-          infoWindow.close();
-          this.activeInfoWindow = null;
-        });
-      }
+    // 닫기 버튼 이벤트 추가 - 방법 개선
+    const handleDomready = () => {
+      setTimeout(() => {
+        const closeBtn = document.getElementById(closeButtonId);
+        if (closeBtn) {
+          // 이벤트 리스너를 제거하고 다시 추가하여 중복 이벤트 방지
+          closeBtn.removeEventListener('click', closeInfoWindow);
+          closeBtn.addEventListener('click', closeInfoWindow);
+          
+          // 터치 이벤트도 추가 (모바일 대응)
+          closeBtn.removeEventListener('touchend', closeInfoWindow);
+          closeBtn.addEventListener('touchend', closeInfoWindow);
+          
+          // 시각적 피드백 추가
+          closeBtn.addEventListener('mouseover', () => {
+            closeBtn.style.backgroundColor = '#eee';
+            closeBtn.style.color = '#666';
+          });
+          
+          closeBtn.addEventListener('mouseout', () => {
+            closeBtn.style.backgroundColor = '#f8f8f8';
+            closeBtn.style.color = '#aaa';
+          });
+        }
+      }, 100); // 약간의 지연시간을 두어 DOM이 완전히 준비되도록 함
+    };
+    
+    const closeInfoWindow = (e) => {
+      e.stopPropagation(); // 이벤트 버블링 방지
+      infoWindow.close();
+      this.activeInfoWindow = null;
+    };
+
+    // domready 이벤트 연결
+    naver.maps.Event.addListener(infoWindow, 'domready', handleDomready);
+
+    // 정보창이 열릴 때 이벤트도 다시 연결 (보험)
+    naver.maps.Event.addListener(infoWindow, 'open', () => {
+      handleDomready();
+      
+      this.loadKoreanAddress(place.latitude, place.longitude).then(address => {
+        const infoContent = document.getElementById(uniqueId);
+        if (infoContent) {
+          infoContent.innerHTML = this.getKoreanPlaceInfo(category, place, address);
+        }
+      });
     });
 
     // 지도 줌 레벨에 따른 정보창 크기 조절
@@ -179,16 +217,6 @@ class MarkerService {
           }
         }, 100);
       }
-    });
-
-    // 기존 주소 정보 비동기 로드 로직 유지
-    naver.maps.Event.addListener(infoWindow, 'open', () => {
-      this.loadKoreanAddress(place.latitude, place.longitude).then(address => {
-        const infoContent = document.getElementById(uniqueId);
-        if (infoContent) {
-          infoContent.innerHTML = this.getKoreanPlaceInfo(category, place, address);
-        }
-      });
     });
 
     return infoWindow;

@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import NaverMap from './NaverMap';
 import MenuPanel from '../panels/MenuPanel';
 import './MapContainer.css';
+import { API_BASE_URL } from '../../config/api';
 
 const filterButtons = {
   '일반': [
@@ -30,9 +31,6 @@ const filterButtons = {
     { icon: '/images/map/category/warning.png', text: '외국인 주의구역' },
   ],
 };
-
-// API 호출을 위한 기본 URL
-const API_BASE_URL = 'http://15.164.94.96:3001'; // 개발 환경에서는 localhost 사용
 
 const MapContainer = ({ 
   selectedMode, 
