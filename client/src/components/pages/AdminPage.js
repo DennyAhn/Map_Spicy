@@ -53,7 +53,7 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:3001/api/complaints')
+    axios.get('http://15.164.94.96:3001/api/complaints')
       .then(res => {
         setComplaints(res.data);
         setFiltered(res.data);
