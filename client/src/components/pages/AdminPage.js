@@ -6,6 +6,7 @@ import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, ArcElement, T
 import axios from 'axios';
 import styles from './AdminPage.module.css'; // ✅ 수정된 모듈 스타일
 import AdminDangerMap from './AdminDangerMap';
+import { API_BASE_URL } from '../../config/api';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend);
 
@@ -53,13 +54,18 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
-    axios.get('http://15.164.94.96:3001/api/complaints')
-      .then(res => {
-        setComplaints(res.data);
-        setFiltered(res.data);
-        generateCharts(res.data);
-      })
-      .catch(err => console.error('민원 데이터를 불러오지 못했습니다:', err));
+    const fetchComplaints = async () => {
+      try {
+        const result = await axios.get(`${API_BASE_URL}/api/complaints`);
+        setComplaints(result.data);
+        setFiltered(result.data);
+        generateCharts(result.data);
+      } catch (error) {
+        console.error('민원 데이터 로딩 실패:', error);
+      }
+    };
+
+    fetchComplaints();
   }, []);
 
   useEffect(() => {

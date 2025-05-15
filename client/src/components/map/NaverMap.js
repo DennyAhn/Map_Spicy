@@ -16,12 +16,80 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
   const watchPositionId = useRef(null);
   const prevActiveFilters = useRef(new Set());
   const [showListPanel, setShowListPanel] = useState(false); // 리스트 패널 상태 추가
+  const [isFollowingUser, setIsFollowingUser] = useState(false); // 사용자 위치 추적 상태 추가
 
   // 리스트 패널 상태 감지
   useEffect(() => {
     // activeFilters 변경 시 리스트 패널 상태 업데이트
     setShowListPanel(activeFilters.length > 0);
   }, [activeFilters]);
+
+  // 실시간 위치 추적 함수
+  const startRealTimeTracking = () => {
+    // 이미 위치 추적 중이면 종료
+    if (watchPositionId.current) {
+      navigator.geolocation.clearWatch(watchPositionId.current);
+      watchPositionId.current = null;
+    }
+    
+    // 위치 정보 확인 가능 여부 체크
+    if (!navigator.geolocation) {
+      console.error('이 브라우저는 위치 정보를 지원하지 않습니다.');
+      return;
+    }
+    
+    // 실시간 위치 추적 시작
+    watchPositionId.current = navigator.geolocation.watchPosition(
+      (position) => {
+        if (mapService.current) {
+          const coords = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          };
+          
+          console.log('사용자 위치 업데이트:', coords);
+          
+          // 현재 위치 마커 업데이트
+          mapService.current.updateCurrentLocation(coords);
+          
+          // 부모 컴포넌트에 위치 정보 전달
+          if (onCurrentLocationUpdate) {
+            onCurrentLocationUpdate(coords);
+          }
+          
+          // 위치 정보 저장
+          try {
+            sessionStorage.setItem('lastKnownLocation', JSON.stringify({
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+              timestamp: Date.now()
+            }));
+          } catch (e) {
+            console.error('위치 정보 저장 실패:', e);
+          }
+        }
+      },
+      (error) => {
+        console.error('위치 추적 오류:', error);
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            console.error('사용자가 위치 정보 요청을 거부했습니다.');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            console.error('위치 정보를 사용할 수 없습니다. GPS 신호를 확인해주세요.');
+            break;
+          case error.TIMEOUT:
+            console.error('위치 정보 요청 시간이 초과되었습니다.');
+            break;
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 5000,  // 5초 이내의 캐시된 위치 사용
+        timeout: 10000     // 10초 이내 응답이 없으면 타임아웃
+      }
+    );
+  };
 
   // 지도 초기화
   useEffect(() => {
@@ -213,35 +281,8 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
             console.error('위치 정보 저장 실패:', e);
           }
           
-          // 실시간 위치 추적 시작
-          watchPositionId.current = navigator.geolocation.watchPosition(
-            (newPosition) => {
-              if (mapService.current && isSubscribed) {
-                const coords = {
-                  latitude: newPosition.coords.latitude,
-                  longitude: newPosition.coords.longitude
-                };
-                mapService.current.updateCurrentLocation(coords);
-                
-                // 위치 변경 시 스토리지 업데이트
-                try {
-                  sessionStorage.setItem('lastKnownLocation', JSON.stringify({
-                    latitude: coords.latitude,
-                    longitude: coords.longitude,
-                    timestamp: Date.now()
-                  }));
-                } catch (e) {
-                  console.error('위치 정보 저장 실패:', e);
-                }
-              }
-            },
-            (error) => console.error('위치 추적 오류:', error),
-            {
-              enableHighAccuracy: true,
-              maximumAge: 30000,
-              timeout: 10000
-            }
-          );
+          // 실시간 위치 추적 시작 - 모든 화면에서 위치 추적 활성화
+          startRealTimeTracking();
         }
       } catch (error) {
         console.error('지도 초기화 오류:', error);
@@ -270,6 +311,9 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
         }
         
         setIsMapReady(true);
+        
+        // 오류가 발생해도 위치 추적은 시도
+        startRealTimeTracking();
       }
     };
     
@@ -279,9 +323,43 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
       isSubscribed = false;
       if (watchPositionId.current) {
         navigator.geolocation.clearWatch(watchPositionId.current);
+        watchPositionId.current = null;
       }
     };
   }, [onCurrentLocationUpdate, mapServiceRef, startLocation]);
+
+  // 주기적 위치 업데이트를 위한 추가 useEffect
+  useEffect(() => {
+    if (!isMapReady || !mapService.current) return;
+    
+    // 5분마다 위치 정보 갱신 (백그라운드에서도 동작하도록)
+    const intervalId = setInterval(() => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            if (mapService.current) {
+              const coords = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+              };
+              
+              console.log('주기적 위치 업데이트:', coords);
+              mapService.current.updateCurrentLocation(coords);
+              
+              // 부모 컴포넌트에 위치 정보 전달
+              if (onCurrentLocationUpdate) {
+                onCurrentLocationUpdate(coords);
+              }
+            }
+          },
+          (error) => console.error('주기적 위치 업데이트 실패:', error),
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      }
+    }, 300000); // 5분마다 업데이트 (300000ms)
+    
+    return () => clearInterval(intervalId);
+  }, [isMapReady, onCurrentLocationUpdate]);
 
   // 필터 변경 감지 및 마커 업데이트
   useEffect(() => {

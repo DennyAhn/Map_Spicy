@@ -1,3 +1,5 @@
+import { API_BASE_URL, PROXY_URL } from '../../config/api';
+
 export const fetchCCTVPlacesData = async (lat, lng) => {
   try {
     console.log(`CCTV 데이터 요청: lat=${lat}, lng=${lng}`);
@@ -7,8 +9,6 @@ export const fetchCCTVPlacesData = async (lat, lng) => {
       lat: lat,
       lng: lng
     });
-    
-    const PROXY_URL = 'http://15.164.94.96:3001';
     
     const url = `${PROXY_URL}/api/cctvPlaces?${params}`;
     console.log('요청 URL:', url);

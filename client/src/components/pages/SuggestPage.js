@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './SuggestPage.css';
+import { API_BASE_URL } from '../../config/api';
 
 const SuggestPage = () => {
   const navigate = useNavigate();
@@ -110,7 +111,7 @@ const SuggestPage = () => {
     }
 
     try {
-      const response = await axios.post('http://15.164.94.96:3001/api/preprocess/analyze', {
+      const response = await axios.post(`${API_BASE_URL}/api/preprocess/analyze`, {
         title: formData.title,
         content: formData.description,
         category: formData.category,
