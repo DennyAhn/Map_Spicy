@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './RiskReportPage.css';
-import { API_BASE_URL } from '../../config/api';
 
 const RiskReportPage = () => {
   const navigate = useNavigate();
@@ -12,15 +11,15 @@ const RiskReportPage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [activeLocationField, setActiveLocationField] = useState(null);
 
-  // 주소 입력용
   const [formData, setFormData] = useState({
     category: '',
     location1: '',
     location2: '',
-    description: ''
+    description: '',
+    userType: '',
+    age: ''
   });
 
-  // 위도/경도 저장용
   const [coords, setCoords] = useState({
     start: null,
     end: null
@@ -38,7 +37,6 @@ const RiskReportPage = () => {
           zoom: 16,
         });
 
-        // 🔹 현재 위치 마커
         new window.naver.maps.Marker({
           position: new window.naver.maps.LatLng(latitude, longitude),
           map,
@@ -53,7 +51,6 @@ const RiskReportPage = () => {
           }
         });
 
-        // 🔹 지도 클릭 시 주소 + 위경도 처리
         window.naver.maps.Event.addListener(map, 'click', function (e) {
           const latlng = e.coord;
           const lat = latlng.lat();
@@ -68,13 +65,11 @@ const RiskReportPage = () => {
             const result = response.v2.address;
             const address = result.roadAddress || result.jibunAddress || `${lat}, ${lng}`;
 
-            // 주소 업데이트
             setFormData(prev => ({
               ...prev,
               [activeLocationField]: address
             }));
 
-            // 좌표 저장
             setCoords(prev => ({
               ...prev,
               [activeLocationField === 'location1' ? 'start' : 'end']: { lat, lng }
@@ -94,19 +89,27 @@ const RiskReportPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.description || !formData.location1 || !formData.location2) {
-      console.log('위치 2곳과 설명은 필수입니다.');
+    if (
+      !formData.description ||
+      !formData.location1 ||
+      !formData.location2 ||
+      !formData.userType ||
+      (formData.userType !== '노인' && !formData.age)
+    ) {
+      console.log('모든 필수 정보를 입력해주세요.');
       return;
     }
 
     try {
-      await axios.post(`${API_BASE_URL}/api/risk-report-submit`, {
+      await axios.post('http://15.164.94.96:3001/api/risk-report-submit', {
         reason: formData.description,
         category: formData.category,
         start_lat: coords.start?.lat,
         start_lng: coords.start?.lng,
         end_lat: coords.end?.lat,
-        end_lng: coords.end?.lng
+        end_lng: coords.end?.lng,
+        user_type: formData.userType,
+        age: formData.age || null
       });
 
       setSubmitted(true);
@@ -115,7 +118,9 @@ const RiskReportPage = () => {
         category: '',
         location1: '',
         location2: '',
-        description: ''
+        description: '',
+        userType: '',
+        age: ''
       });
 
       setCoords({
@@ -141,10 +146,64 @@ const RiskReportPage = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="suggest-form">
+
+        {/* 사용자 유형 입력 */}
+        <div className="form-section">
+          <label>사용자 유형 (필수)</label>
+          <div className="category-grid">
+            {['남성', '여성', '노인'].map((type) => (
+              <button
+                type="button"
+                key={type}
+                className={`category-btn ${formData.userType === type ? 'active' : ''}`}
+                onClick={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    userType: type,
+                    age: type === '노인' ? '' : prev.age
+                  }))
+                }
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+
+          {formData.userType !== '노인' && formData.userType && (
+            <div style={{ marginTop: '10px' }}>
+              <input
+                type="number"
+                min="0"
+                placeholder="나이를 입력하세요"
+                value={formData.age}
+                onChange={(e) => {
+                  const newAge = e.target.value;
+                  setFormData((prev) => {
+                    // 65세 이상일 경우 자동으로 '노인'으로 변경
+                    if ((prev.userType === '남성' || prev.userType === '여성') && Number(newAge) >= 65) {
+                      return {
+                        ...prev,
+                        userType: '노인',
+                        age: ''
+                      };
+                    }
+                    return {
+                      ...prev,
+                      age: newAge
+                    };
+                  });
+                }}
+                className="text-input"
+                required
+              />
+            </div>
+          )}
+        </div>
+
         <div className="form-section">
           <label>유형 선택 (선택)</label>
           <div className="category-grid">
-            {['CCTV 부재', '가로등 부재', '좁은 길목', '보도블럭 파손', '쓰레기 무단 투기','기타'].map((cat) => (
+            {['CCTV 부재', '가로등 부재', '좁은 길목', '보도블럭 파손', '노인 경사', '기타'].map((cat) => (
               <button
                 type="button"
                 key={cat}
