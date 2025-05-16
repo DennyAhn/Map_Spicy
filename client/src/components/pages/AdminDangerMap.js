@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import styles from './AdminPage.module.css';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../../config/api';
 
 /* global naver */
 const AdminDangerMapPage = () => {
@@ -12,13 +13,13 @@ const AdminDangerMapPage = () => {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const res = await axios.get('http://15.164.94.96:3001/api/complaintsmap');
+        const res = await axios.get(`${API_BASE_URL}/api/complaintsmap`);
         const updatedPaths = [];
 
         for (const path of res.data) {
           if (!path.route_coords) {
             try {
-              const registerRes = await axios.post('http://15.164.94.96:3001/api/router/register', {
+              const registerRes = await axios.post(`${API_BASE_URL}/api/router/register`, {
                 start_lat: path.start_lat,
                 start_lng: path.start_lng,
                 end_lat: path.end_lat,

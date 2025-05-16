@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import NaverMap from './NaverMap';
 import MenuPanel from '../panels/MenuPanel';
 import './MapContainer.css';
+import { API_BASE_URL } from '../../config/api';
 
 const filterButtons = {
   '일반': [
@@ -31,9 +32,6 @@ const filterButtons = {
   ],
 };
 
-// API 호출을 위한 기본 URL
-const API_BASE_URL = 'http://15.164.94.96:3001'; // 개발 환경에서는 localhost 사용
-
 const MapContainer = ({ 
   selectedMode, 
   isSearchOpen, 
@@ -52,10 +50,14 @@ const MapContainer = ({
   const [showListPanel, setShowListPanel] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isRefreshButtonActive, setIsRefreshButtonActive] = useState(false);
   const mapServiceRef = useRef(null);
 
-  const toggleMenu = () => setIsMenuOpen(prev => !prev);
+  useEffect(() => {
+    setShowListPanel(activeFilters.length > 0);
+  }, [activeFilters]);
 
+  const toggleMenu = () => setIsMenuOpen(prev => !prev);
 
   // API에서 데이터 가져오기
   const fetchCategoryData = async (category) => {
@@ -257,14 +259,58 @@ const MapContainer = ({
     }
   };
   
+  // 새로운 함수 추가: 현재 지도 위치에서 마커 업데이트
+  const handleRefreshMarkersAtCurrentView = async () => {
+    setIsRefreshButtonActive(true);
     
+    if (mapServiceRef.current && activeFilters.length > 0) {
+      try {
+        // 현재 지도 중심 위치 가져오기
+        const mapCenter = mapServiceRef.current.getMapCenter();
+        
+        if (mapCenter) {
+          console.log('현재 지도 위치에서 마커 업데이트:', mapCenter);
+          
+          // 각 활성화된 필터에 대해 데이터 다시 불러오기
+          for (const filter of activeFilters) {
+            const data = await fetchCategoryData(filter);
+            if (data && data.length > 0) {
+              console.log(`${filter} 데이터 업데이트됨:`, data.length);
+              
+              // 현재 선택된 카테고리인 경우 리스트 패널 업데이트
+              if (filter === selectedCategory) {
+                setListPanelData(data);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error('마커 업데이트 중 오류:', err);
+      }
+    }
+    
+    setTimeout(() => setIsRefreshButtonActive(false), 1000);
+  };
 
   const handleMoveToCurrent = () => {
     setIsLocationButtonActive(true);
   
-    if (mapServiceRef.current?.moveToCurrentLocation) {
+    if (mapServiceRef.current) {
+      // 현재 위치로 이동하고 위치 추적 모드를 Follow로 설정
       mapServiceRef.current.moveToCurrentLocation();
+      
+      // 명시적으로 위치 추적 모드를 Follow로 설정 (이미 moveToCurrentLocation에 포함되어 있지만 명확하게 표시)
+      if (mapServiceRef.current.setLocationTrackingMode) {
+        console.log('위치 추적 모드를 Follow로 설정합니다.');
+        mapServiceRef.current.setLocationTrackingMode('Follow');
+      }
+      
+      // iOS 디바이스에서 방향 권한 요청
+      if (mapServiceRef.current.requestOrientationPermission) {
+        mapServiceRef.current.requestOrientationPermission();
+      }
     }
+    
     setTimeout(() => setIsLocationButtonActive(false), 3000);
   };
 
@@ -369,8 +415,29 @@ const MapContainer = ({
         onClick={handleMoveToCurrent}
       >
         <img src="/images/RouteSelectionScreen/location.svg" alt="현재 위치로 이동" />
-        
       </button>
+      
+      {/* 현재 지도에서 검색 버튼 */}
+      {activeFilters.length > 0 && (
+        <button
+          className={`refresh-markers-button ${isRefreshButtonActive ? 'active' : ''} ${showListPanel ? 'panel-open' : ''}`}
+          onClick={handleRefreshMarkersAtCurrentView}
+        >
+          <svg 
+            width="24" 
+            height="24" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ color: 'currentColor' }}
+          >
+            <path 
+              d="M17.65 6.35C16.2 4.9 14.21 4 12 4C7.58 4 4.01 7.58 4.01 12C4.01 16.42 7.58 20 12 20C15.73 20 18.84 17.45 19.73 14H17.65C16.83 16.33 14.61 18 12 18C8.69 18 6 15.31 6 12C6 8.69 8.69 6 12 6C13.66 6 15.14 6.69 16.22 7.78L13 11H20V4L17.65 6.35Z" 
+              fill="currentColor"
+            />
+          </svg>
+        </button>
+      )}
 
       {/* 카테고리 리스트 패널 */}
       {showListPanel && (

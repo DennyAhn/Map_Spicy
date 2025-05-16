@@ -1,0 +1,6 @@
+/* 네이버 맵 컨테이너 스타일 */
+.naver-map-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}

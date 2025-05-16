@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './SupportPage.css';
+import { API_BASE_URL } from '../../config/api';
 
 const SupportPage = () => {
   const navigate = useNavigate();
@@ -17,12 +18,18 @@ const SupportPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
+    if (!inquiryType || !inquiryContent) {
+      console.log('모든 필드를 채워주세요');
+      return;
+    }
+    
     try {
-      await axios.post('http://15.164.94.96:3001/api/feature-issues', {
+      await axios.post(`${API_BASE_URL}/api/feature-issues`, {
         title: inquiryType,
         content: inquiryContent
       });
+      
       alert('문의가 정상적으로 접수되었습니다.');
       setInquiryType('');
       setInquiryContent('');

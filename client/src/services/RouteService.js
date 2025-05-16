@@ -1,4 +1,6 @@
 /* global naver */
+import { API_BASE_URL } from '../config/api';
+
 class RouteService {
   constructor(mapInstance) {
     this.mapInstance = mapInstance;
@@ -141,7 +143,7 @@ class RouteService {
       console.log('요청 좌표:', { start: startStr, goal: goalStr });
 
       const response = await fetch(
-        `http://15.164.94.96:3001/direction/${apiEndpoint}?start=${startStr}&goal=${goalStr}`
+        `${API_BASE_URL}/direction/${apiEndpoint}?start=${startStr}&goal=${goalStr}`
       );
 
       if (!response.ok) {

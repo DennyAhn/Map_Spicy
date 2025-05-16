@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './RiskReportPage.css';
+import { API_BASE_URL } from '../../config/api';
 
 const RiskReportPage = () => {
   const navigate = useNavigate();
@@ -99,7 +100,7 @@ const RiskReportPage = () => {
     }
 
     try {
-      await axios.post('http://15.164.94.96:3001/api/risk-report-submit', {
+      await axios.post(`${API_BASE_URL}/api/risk-report-submit`, {
         reason: formData.description,
         category: formData.category,
         start_lat: coords.start?.lat,

@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '../../config/api';
+
 export const fetchPharmacyPlacesData = async (lat, lng) => {
     try {
       // 위치 정보를 쿼리 파라미터로 추가
@@ -5,10 +7,8 @@ export const fetchPharmacyPlacesData = async (lat, lng) => {
         lat: lat,
         lng: lng
       });
-
-      const PROXY_URL = 'http://15.164.94.96:3001';
       
-      const response = await fetch(`${PROXY_URL}/api/pharmacyPlaces?${params}`);
+      const response = await fetch(`${API_BASE_URL}/api/pharmacyPlaces?${params}`);
       
       if (!response.ok) {
         throw new Error(`Failed to fetch pharmacy places: ${response.status}`);
