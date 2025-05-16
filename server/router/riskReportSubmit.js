@@ -51,9 +51,19 @@ function calculateDanger(reason = '', category = '') {
 
 // POST: 위험 제보 저장
 router.post('/', async (req, res) => {
-  const { reason, category, start_lat, start_lng, end_lat, end_lng } = req.body;
+  const {
+    reason,
+    category,
+    start_lat,
+    start_lng,
+    end_lat,
+    end_lng,
+    user_type,
+    age
+  } = req.body;
 
-  if (!reason || !start_lat || !start_lng || !end_lat || !end_lng || !category) {
+  // 필수 항목 검증
+  if (!reason || !start_lat || !start_lng || !end_lat || !end_lng ) {
     return res.status(400).json({ error: '필수 항목이 누락되었습니다.' });
   }
 
@@ -62,9 +72,9 @@ router.post('/', async (req, res) => {
   try {
     const [result] = await db.query(
       `INSERT INTO complaintsmap 
-       (reason, category, start_lat, start_lng, end_lat, end_lng, danger_score, danger_level)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [reason, category, start_lat, start_lng, end_lat, end_lng, score, level]
+       (reason, category, start_lat, start_lng, end_lat, end_lng, danger_score, danger_level, user_type, age)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [reason, category, start_lat, start_lng, end_lat, end_lng, score, level, user_type || null, age || null]
     );
 
     res.status(201).json({ success: true, id: result.insertId, score, level });
