@@ -195,10 +195,42 @@
     transition: bottom 0.3s ease-in-out;
   }
   
+  /* 현재 지도에서 검색 버튼 스타일 */
+  .refresh-markers-button {
+    position: absolute;
+    right: 16px;
+    bottom: 144px; /* 현재 위치 버튼 위에 배치 */
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+    background: white;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    color: #3b89e0; /* 파란색 아이콘 */
+  }
+  
+  .refresh-markers-button.active {
+    background: #3b89e0;
+    color: white;
+    transform: rotate(360deg);
+  }
+  
   /* 패널이 열려있을 때 버튼 위치 조정 */
-  .move-to-current-button.panel-open {
-    bottom: 40vh; /* 패널 높이(35vh)보다 약간 위에 위치 */
+  .move-to-current-button.panel-open,
+  .refresh-markers-button.panel-open {
+    bottom: calc(40vh + 58px); /* 패널 높이(35vh)보다 약간 위에 위치 */
     z-index: 1100; /* 패널보다 위에 표시되도록 z-index 높임 */
+  }
+  
+  /* refresh 버튼이 panel-open일 때 위치 조정 */
+  .refresh-markers-button.panel-open {
+    bottom: calc(40vh + 116px); /* 현재 위치 버튼 위에 배치 */
   }
   
   .move-to-current-button.active::before {
