@@ -152,6 +152,11 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
         }
         markerService.current = new MarkerService();
         
+        // 길찾기 버튼 클릭 이벤트 핸들러 등록
+        if (markerService.current) {
+          markerService.current.handleFindRouteClick(mapService.current.mapInstance);
+        }
+        
         // 초기 위치에 마커 (있는 경우)
         if (initialLocation) {
           mapService.current.setCurrentLocation(initialLocation);
@@ -241,6 +246,11 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
         markerService.current = new MarkerService();
         if (mapServiceRef) {
           mapServiceRef.current = mapService.current;
+        }
+        
+        // 길찾기 버튼 클릭 이벤트 핸들러 등록
+        if (markerService.current) {
+          markerService.current.handleFindRouteClick(mapService.current.mapInstance);
         }
         
         // 기본 위치에 마커 표시

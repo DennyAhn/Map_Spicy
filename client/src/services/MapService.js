@@ -101,11 +101,11 @@ class MapService {
   
   // 방향성 있는 아이콘 업데이트
   updateDirectionalIcon() {
-    // 기존 user.png 이미지 사용
-    const imageSize = 16; // 작은 크기로 조정
+    // 마커 크기를 최초 크기로 복원
+    const imageSize = 16; // 최초 크기로 복원
     const arrowColor = '#4285F4'; // 화살표 색상
     
-    // 마커 아이콘 설정 - 작은 방향 표시기 추가
+    // 마커 아이콘 설정 - 마커는 작게, 방향 표시기는 적당하게
     this.currentLocationIcon = {
       content: `<div style="
         position: relative;
@@ -118,7 +118,7 @@ class MapService {
           height: 100%;
         " />
         
-        <!-- 매우 작은 화살표 (회전) -->
+        <!-- 화살표 크기 조정 (회전) -->
         <div style="
           position: absolute;
           top: 0;
@@ -132,11 +132,11 @@ class MapService {
             position: absolute;
             width: 0;
             height: 0;
-            border-left: 2px solid transparent;
-            border-right: 2px solid transparent;
-            border-bottom: 4px solid ${arrowColor};
-            top: -4px;
-            left: calc(50% - 2px);
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 8px solid ${arrowColor};
+            top: -8px;
+            left: calc(50% - 4px);
           "></div>
         </div>
       </div>`,
@@ -629,6 +629,37 @@ class MapService {
   // 현재 위치 추적 모드 상태 반환하는 함수 추가
   getLocationTrackingMode() {
     return this.locationTrackingMode;
+  }
+  
+  // 지도 강제 새로고침 함수 추가
+  refresh(clearCache = true) {
+    console.log('지도 강제 새로고침 실행');
+    
+    // 캐시 초기화 (네이버 지도 API에서 지원하는 경우)
+    if (clearCache && naver.maps.Cache) {
+      naver.maps.Cache.clear();
+    }
+    
+    // 지도 타일 강제 재로드
+    if (this.mapInstance) {
+      const center = this.mapInstance.getCenter();
+      const zoom = this.mapInstance.getZoom();
+      
+      // 약간의 지연 시간을 두고 실행하여 DOM 업데이트 보장
+      setTimeout(() => {
+        // 지도 약간 이동 후 원위치 (강제 타일 리로드 트리거)
+        this.mapInstance.setCenter(new naver.maps.LatLng(
+          center.lat() + 0.0001, 
+          center.lng() + 0.0001
+        ));
+        
+        setTimeout(() => {
+          // 원래 위치로 복귀
+          this.mapInstance.setCenter(center);
+          this.mapInstance.setZoom(zoom);
+        }, 100);
+      }, 100);
+    }
   }
 }
 

@@ -50,7 +50,6 @@ const MapContainer = ({
   const [showListPanel, setShowListPanel] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isRefreshButtonActive, setIsRefreshButtonActive] = useState(false);
   const mapServiceRef = useRef(null);
 
   useEffect(() => {
@@ -259,38 +258,7 @@ const MapContainer = ({
     }
   };
   
-  // 새로운 함수 추가: 현재 지도 위치에서 마커 업데이트
-  const handleRefreshMarkersAtCurrentView = async () => {
-    setIsRefreshButtonActive(true);
-    
-    if (mapServiceRef.current && activeFilters.length > 0) {
-      try {
-        // 현재 지도 중심 위치 가져오기
-        const mapCenter = mapServiceRef.current.getMapCenter();
-        
-        if (mapCenter) {
-          console.log('현재 지도 위치에서 마커 업데이트:', mapCenter);
-          
-          // 각 활성화된 필터에 대해 데이터 다시 불러오기
-          for (const filter of activeFilters) {
-            const data = await fetchCategoryData(filter);
-            if (data && data.length > 0) {
-              console.log(`${filter} 데이터 업데이트됨:`, data.length);
-              
-              // 현재 선택된 카테고리인 경우 리스트 패널 업데이트
-              if (filter === selectedCategory) {
-                setListPanelData(data);
-              }
-            }
-          }
-        }
-      } catch (err) {
-        console.error('마커 업데이트 중 오류:', err);
-      }
-    }
-    
-    setTimeout(() => setIsRefreshButtonActive(false), 1000);
-  };
+
 
   const handleMoveToCurrent = () => {
     setIsLocationButtonActive(true);
@@ -312,6 +280,66 @@ const MapContainer = ({
     }
     
     setTimeout(() => setIsLocationButtonActive(false), 3000);
+  };
+
+  // 길찾기 버튼 클릭 핸들러 추가
+  const handleRouteButtonClick = (item) => {
+    console.log('길찾기 버튼 클릭:', item);
+    
+    // item의 구조 확인
+    let destinationLat, destinationLng;
+    
+    if (item.coords && item.coords.latitude && item.coords.longitude) {
+      // coords 객체 내에 좌표가 있는 경우
+      destinationLat = item.coords.latitude;
+      destinationLng = item.coords.longitude;
+    } else if (item.latitude && item.longitude) {
+      // 최상위 속성으로 좌표가 있는 경우
+      destinationLat = item.latitude;
+      destinationLng = item.longitude;
+    } else {
+      console.error('목적지 좌표를 찾을 수 없습니다:', item);
+      alert('목적지 좌표 정보가 없어 길찾기를 사용할 수 없습니다.');
+      return;
+    }
+    
+    // 현재 위치 가져오기
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const startCoords = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        
+        // 대상명 인코딩
+        const destinationName = encodeURIComponent(item.name || selectedCategory);
+        
+        console.log('길찾기 정보:', {
+          출발: `${startCoords.latitude}, ${startCoords.longitude}`,
+          도착: `${destinationLat}, ${destinationLng}`,
+          목적지명: destinationName
+        });
+        
+        // 메인 페이지에서 상태 변수로 처리되는 방식이므로 세션 스토리지 사용
+        sessionStorage.setItem('route_start_lat', startCoords.latitude);
+        sessionStorage.setItem('route_start_lng', startCoords.longitude);
+        sessionStorage.setItem('route_goal_lat', destinationLat);
+        sessionStorage.setItem('route_goal_lng', destinationLng);
+        sessionStorage.setItem('route_dest_name', destinationName);
+        
+        // 메인 페이지로 이동
+        window.location.href = '/';
+      },
+      (error) => {
+        console.error('위치 정보를 가져올 수 없습니다:', error);
+        alert('위치 정보를 가져올 수 없습니다. 위치 권한을 확인해주세요.');
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
   };
 
   return (
@@ -417,28 +445,6 @@ const MapContainer = ({
         <img src="/images/RouteSelectionScreen/location.svg" alt="현재 위치로 이동" />
       </button>
       
-      {/* 현재 지도에서 검색 버튼 */}
-      {activeFilters.length > 0 && (
-        <button
-          className={`refresh-markers-button ${isRefreshButtonActive ? 'active' : ''} ${showListPanel ? 'panel-open' : ''}`}
-          onClick={handleRefreshMarkersAtCurrentView}
-        >
-          <svg 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ color: 'currentColor' }}
-          >
-            <path 
-              d="M17.65 6.35C16.2 4.9 14.21 4 12 4C7.58 4 4.01 7.58 4.01 12C4.01 16.42 7.58 20 12 20C15.73 20 18.84 17.45 19.73 14H17.65C16.83 16.33 14.61 18 12 18C8.69 18 6 15.31 6 12C6 8.69 8.69 6 12 6C13.66 6 15.14 6.69 16.22 7.78L13 11H20V4L17.65 6.35Z" 
-              fill="currentColor"
-            />
-          </svg>
-        </button>
-      )}
-
       {/* 카테고리 리스트 패널 */}
       {showListPanel && (
         <div className="list-panel">
@@ -488,6 +494,19 @@ const MapContainer = ({
                         <p className="list-item-category">분류: {item.category}</p>
                       )}
                     </div>
+                    
+                    {/* 길찾기 버튼 추가 */}
+                    {item.latitude && item.longitude && (
+                      <button 
+                        className="list-item-route-button"
+                        onClick={() => handleRouteButtonClick(item)}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24">
+                          <path fill="white" d="M21.71 11.29l-9-9a.996.996 0 00-1.41 0l-9 9a.996.996 0 000 1.41l9 9c.39.39 1.02.39 1.41 0l9-9a.996.996 0 000-1.41zM14 14.5V12h-4v3H8v-4c0-.55.45-1 1-1h5V7.5l3.5 3.5-3.5 3.5z"/>
+                        </svg>
+                        길찾기
+                      </button>
+                    )}
                   </div>
                 );
               })

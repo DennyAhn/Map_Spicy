@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './SearchScreen.css';
 
-const SearchScreen = ({ onClose, onNavigate, isStartLocation = false }) => {
+const SearchScreen = ({ onClose, onNavigate, isStartLocation = false, mapServiceRef }) => {
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,6 +85,26 @@ const SearchScreen = ({ onClose, onNavigate, isStartLocation = false }) => {
     return () => clearTimeout(delayDebounce);
   }, [searchText]);
 
+  // 뒤로가기 버튼 처리 함수 추가
+  const handleBackButton = () => {
+    // 지도 서비스가 있으면 완전히 재초기화
+    if (mapServiceRef && mapServiceRef.current) {
+      console.log('검색화면에서 뒤로가기, 지도 재초기화 신호 전송');
+      
+      // 브라우저 이벤트로 지도 재초기화 트리거
+      window.dispatchEvent(new CustomEvent('map-reinitialize'));
+      
+      // 지연 실행으로 지도 강제 새로고침
+      setTimeout(() => {
+        if (mapServiceRef.current && mapServiceRef.current.refresh) {
+          mapServiceRef.current.refresh(true);
+        }
+      }, 500);
+    }
+    
+    onClose();
+  };
+
   // handleRouteSelect 함수 수정
   const handleRouteSelect = (place) => {
     if (location.state?.fromSuggestPage) {
@@ -102,7 +122,7 @@ const SearchScreen = ({ onClose, onNavigate, isStartLocation = false }) => {
   return (
     <div className="search-screen">
       <div className="search-header">
-        <button className="back-button" onClick={onClose}>
+        <button className="back-button" onClick={handleBackButton}>
           <img
             src="/images/search_bar/back.png"
             alt="back-arrow"

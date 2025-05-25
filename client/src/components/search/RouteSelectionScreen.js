@@ -20,6 +20,7 @@ const RouteSelectionScreen = ({
   const [isFollowing, setIsFollowing] = useState(false);
   const [isLocationButtonActive, setIsLocationButtonActive] = useState(false);
   const watchPositionId = useRef(null);
+  const [isMapInitialized, setIsMapInitialized] = useState(false);
 
   // 경로 타입이 변경될 때 마커를 모두 숨김
   useEffect(() => {
@@ -46,101 +47,169 @@ const RouteSelectionScreen = ({
   };
 
   const drawRoute = useCallback(async () => {
-    if (!routeServiceRef.current || !startLocation || !destination) return;
+    console.log('경로 그리기 시도:', {
+      hasRouteService: !!routeServiceRef.current,
+      hasStartLocation: !!startLocation,
+      hasDestination: !!destination,
+      mapInitialized: isMapInitialized
+    });
+    
+    if (!routeServiceRef.current || !startLocation || !destination || !isMapInitialized) {
+      console.log('경로 그리기를 위한 조건이 충족되지 않았습니다.');
+      return;
+    }
+
     try {
+      console.log('경로 그리기 요청:', {
+        출발: startLocation.coords,
+        도착: destination.coords,
+        경로타입: routeType
+      });
+      
       const result = await routeServiceRef.current.drawRoute(
         startLocation.coords,
         destination.coords,
         routeType
       );
+      console.log('경로 그리기 성공:', result);
       setRouteInfo(result);
     } catch (error) {
       console.error('경로 그리기 실패:', error);
       setRouteInfo({ error: '경로를 찾을 수 없습니다.' });
     }
-  }, [startLocation, destination, routeType]);
+  }, [startLocation, destination, routeType, isMapInitialized]);
 
+  // 지도 초기화
   useEffect(() => {
-    if (mapRef.current) {
-      const initialCoords = startLocation?.coords || {
-        latitude: 37.5665, // 서울시청 좌표(기본값)
-        longitude: 126.9780
-      };
-      mapServiceRef.current = new MapService(mapRef.current, initialCoords);
-      routeServiceRef.current = new RouteService(
-        mapServiceRef.current.getMapInstance()
-      );
-
-      if (startLocation) {
-        mapServiceRef.current.setCurrentLocation(startLocation.coords);
-      }
+    console.log('지도 초기화 시도 중...', mapRef.current ? '맵 요소 있음' : '맵 요소 없음');
+    
+    // mapRef.current가 null이면 초기화하지 않음
+    if (!mapRef.current) {
+      console.error('지도 DOM 요소가 준비되지 않았습니다.');
+      return;
     }
-    // ESLint 경고 해결: mapRef는 ref이므로 의존성 배열에 포함시키지 않음
-  }, [startLocation]);
 
-    // 실시간 위치 추적 기능
-    const startFollowing = useCallback(() => {
-      if (!mapServiceRef.current) return;
-  
-      // 현재 위치로 지도 중심 이동 및 줌
-      if (startLocation?.coords) {
-        mapServiceRef.current.panTo(startLocation.coords);
-        mapServiceRef.current.setZoomLevel(17); // 더 가까운 줌 레벨로 설정
-      }
-  
-      // 위치 추적 시작
-      watchPositionId.current = navigator.geolocation.watchPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const newCoords = { latitude, longitude };
-          
-          // 현재 위치 마커 업데이트
-          mapServiceRef.current.updateCurrentLocation(newCoords);
-          
-          // 따라가기 모드가 활성화된 경우에만 지도 중심 이동
-          if (isFollowing) {
-            mapServiceRef.current.panTo(newCoords);
-          }
-        },
-        (error) => {
-          console.error('위치 추적 오류:', error);
-          setIsFollowing(false);
-          alert('위치 추적에 실패했습니다. GPS 신호를 확인해주세요.');
-        },
-        {
-          enableHighAccuracy: true,
-          maximumAge: 1000, // 1초 이내의 캐시된 위치만 사용
-          timeout: 5000
+    // 네이버 맵 API가 로드되었는지 확인
+    if (!window.naver || !window.naver.maps) {
+      console.error('네이버 맵 API가 로드되지 않았습니다.');
+      return;
+    }
+
+    // MapService가 이미 초기화되었으면 다시 초기화하지 않음
+    if (mapServiceRef.current) {
+      console.log('맵 서비스가 이미 초기화되어 있습니다.');
+      return;
+    }
+
+    // 초기 좌표 설정
+    const initialCoords = startLocation?.coords || {
+      latitude: 37.5665, // 서울시청 좌표(기본값)
+      longitude: 126.9780
+    };
+
+    console.log('MapService 초기화 시작:', { 
+      mapRefExists: !!mapRef.current,
+      initialCoords 
+    });
+
+    try {
+      // MapService 초기화
+      mapServiceRef.current = new MapService(mapRef.current, initialCoords);
+      
+      // RouteService 초기화
+      const mapInstance = mapServiceRef.current.getMapInstance();
+      if (mapInstance) {
+        routeServiceRef.current = new RouteService(mapInstance);
+        console.log('MapService와 RouteService 초기화 완료');
+        
+        // 시작 위치 설정
+        if (startLocation) {
+          mapServiceRef.current.setCurrentLocation(startLocation.coords);
         }
-      );
-    }, [startLocation, isFollowing]);
-  
-    // 위치 추적 중지
-    const stopFollowing = useCallback(() => {
+        
+        // 초기화 성공
+        setIsMapInitialized(true);
+      } else {
+        console.error('맵 인스턴스를 가져올 수 없습니다.');
+      }
+    } catch (error) {
+      console.error('지도 서비스 초기화 오류:', error);
+      setIsMapInitialized(false);
+    }
+  // 렌더링마다 재실행되지 않도록 의존성 배열을 비움
+  }, []);
+
+  // 지도 초기화 및 경로 조건이 변경될 때 경로 그리기
+  useEffect(() => {
+    if (isMapInitialized && startLocation && destination) {
+      console.log('조건이 모두 충족되어 경로 그리기 시작');
+      drawRoute();
+    }
+  }, [isMapInitialized, startLocation, destination, routeType, drawRoute]);
+
+  // 실시간 위치 추적 기능
+  const startFollowing = useCallback(() => {
+    if (!mapServiceRef.current) return;
+
+    // 현재 위치로 지도 중심 이동 및 줌
+    if (startLocation?.coords) {
+      mapServiceRef.current.panTo(startLocation.coords);
+      mapServiceRef.current.setZoomLevel(17); // 더 가까운 줌 레벨로 설정
+    }
+
+    // 위치 추적 시작
+    watchPositionId.current = navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const newCoords = { latitude, longitude };
+        
+        // 현재 위치 마커 업데이트
+        mapServiceRef.current.updateCurrentLocation(newCoords);
+        
+        // 따라가기 모드가 활성화된 경우에만 지도 중심 이동
+        if (isFollowing) {
+          mapServiceRef.current.panTo(newCoords);
+        }
+      },
+      (error) => {
+        console.error('위치 추적 오류:', error);
+        setIsFollowing(false);
+        alert('위치 추적에 실패했습니다. GPS 신호를 확인해주세요.');
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 1000, // 1초 이내의 캐시된 위치만 사용
+        timeout: 5000
+      }
+    );
+  }, [startLocation, isFollowing]);
+
+  // 위치 추적 중지
+  const stopFollowing = useCallback(() => {
+    if (watchPositionId.current) {
+      navigator.geolocation.clearWatch(watchPositionId.current);
+      watchPositionId.current = null;
+    }
+  }, []);
+
+  // 위치 추적 토글
+  const handleFollowToggle = (follow) => {
+    setIsFollowing(follow);
+    if (follow) {
+      startFollowing();
+    } else {
+      stopFollowing();
+    }
+  };
+
+  // 컴포넌트 언마운트 시 위치 추적 중지
+  useEffect(() => {
+    return () => {
       if (watchPositionId.current) {
         navigator.geolocation.clearWatch(watchPositionId.current);
-        watchPositionId.current = null;
-      }
-    }, []);
-  
-    // 위치 추적 토글
-    const handleFollowToggle = (follow) => {
-      setIsFollowing(follow);
-      if (follow) {
-        startFollowing();
-      } else {
-        stopFollowing();
       }
     };
-  
-    // 컴포넌트 언마운트 시 위치 추적 중지
-    useEffect(() => {
-      return () => {
-        if (watchPositionId.current) {
-          navigator.geolocation.clearWatch(watchPositionId.current);
-        }
-      };
-    }, []); 
+  }, []); 
 
   useEffect(() => {
     drawRoute();

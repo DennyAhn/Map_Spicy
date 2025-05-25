@@ -239,6 +239,12 @@ class MarkerService {
           if (this.activeInfoWindow === infoWindow) {
             infoWindow.close();
             this.activeInfoWindow = null;
+            
+            // 정보창이 닫힐 때 현재 위치 버튼 위치 복원
+            const moveToCurrentBtn = document.querySelector('.move-to-current-button');
+            if (moveToCurrentBtn) {
+              moveToCurrentBtn.classList.remove('panel-open');
+            }
           } else {
             if (this.activeInfoWindow) {
               this.activeInfoWindow.close();
@@ -265,6 +271,12 @@ class MarkerService {
             infoWindow.open(mapInstance, marker);
 
             this.activeInfoWindow = infoWindow;
+            
+            // 정보창이 열릴 때 현재 위치 버튼 위치 조정
+            const moveToCurrentBtn = document.querySelector('.move-to-current-button');
+            if (moveToCurrentBtn) {
+              moveToCurrentBtn.classList.add('panel-open');
+            }
           }
         }
         clickCount = 0;
@@ -282,6 +294,12 @@ class MarkerService {
           e.stopPropagation();
           infoWindow.close();
           this.activeInfoWindow = null;
+          
+          // 정보창이 닫힐 때 현재 위치 버튼 위치 복원
+          const moveToCurrentBtn = document.querySelector('.move-to-current-button');
+          if (moveToCurrentBtn) {
+            moveToCurrentBtn.classList.remove('panel-open');
+          }
         });
       }
     });
@@ -374,6 +392,37 @@ class MarkerService {
         ${place.distance}
       </span>`);
     }
+    
+    // 길찾기 버튼 추가
+    const findRouteButton = `
+      <div class="find-route-btn" 
+        data-lat="${place.latitude}" 
+        data-lng="${place.longitude}" 
+        data-name="${place.name || category}"
+        style="
+          position: absolute;
+          top: 10px;
+          right: 28px;
+          background-color: #4285f4;
+          color: white;
+          padding: 2px 6px;
+          border-radius: 4px;
+          font-size: 10px;
+          cursor: pointer;
+          font-weight: 500;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 2;
+        "
+      >
+        <svg width="10" height="10" viewBox="0 0 24 24" style="margin-right: 3px;">
+          <path fill="white" d="M21.71 11.29l-9-9a.996.996 0 00-1.41 0l-9 9a.996.996 0 000 1.41l9 9c.39.39 1.02.39 1.41 0l9-9a.996.996 0 000-1.41zM14 14.5V12h-4v3H8v-4c0-.55.45-1 1-1h5V7.5l3.5 3.5-3.5 3.5z"/>
+        </svg>
+        길찾기
+      </div>
+    `;
     
     // 카테고리별 핵심 정보 추가 (아이콘 포함)
     switch(category) {
@@ -477,7 +526,9 @@ class MarkerService {
           gap: 6px;
           font-size: 10px;
           padding: 2px 0;
+          position: relative;
         ">
+          ${findRouteButton}
           ${items.map(item => 
             `<div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item}</div>`
           ).join('')}
@@ -485,7 +536,12 @@ class MarkerService {
       `;
     } else {
       // 정보가 없을 경우 간단한 메시지
-      info = `<div style="text-align: center; color: #888; font-size: 10px; padding: 4px 0;">상세 정보 제공 준비 중</div>`;
+      info = `
+        <div style="text-align: center; color: #888; font-size: 10px; padding: 4px 0; position: relative;">
+          ${findRouteButton}
+          상세 정보 제공 준비 중
+        </div>
+      `;
     }
     
     return info;
@@ -546,6 +602,44 @@ class MarkerService {
       this.addressCache.set(cacheKey, '주소 정보를 불러올 수 없습니다.');
       return null;
     }
+  }
+
+  // 길찾기 버튼 클릭 이벤트 처리 함수 추가
+  handleFindRouteClick(mapInstance) {
+    document.addEventListener('click', (e) => {
+      const findRouteBtn = e.target.closest('.find-route-btn');
+      if (findRouteBtn) {
+        e.stopPropagation();
+        
+        const lat = findRouteBtn.getAttribute('data-lat');
+        const lng = findRouteBtn.getAttribute('data-lng');
+        const name = findRouteBtn.getAttribute('data-name');
+        
+        if (lat && lng) {
+          // 현재 위치 가져오기
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const startCoords = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+              };
+              
+              const destinationCoords = {
+                latitude: parseFloat(lat),
+                longitude: parseFloat(lng)
+              };
+              
+              // 경로 선택 화면으로 이동
+              window.location.href = `/route?startLat=${startCoords.latitude}&startLng=${startCoords.longitude}&goalLat=${destinationCoords.latitude}&goalLng=${destinationCoords.longitude}&destName=${encodeURIComponent(name)}`;
+            },
+            (error) => {
+              console.error('위치 정보를 가져올 수 없습니다:', error);
+              alert('위치 정보를 가져올 수 없습니다. 위치 권한을 확인해주세요.');
+            }
+          );
+        }
+      }
+    });
   }
 }
 
