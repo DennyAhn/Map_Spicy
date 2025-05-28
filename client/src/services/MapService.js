@@ -101,11 +101,10 @@ class MapService {
   
   // 방향성 있는 아이콘 업데이트
   updateDirectionalIcon() {
-    // 마커 크기를 최초 크기로 복원
-    const imageSize = 16; // 최초 크기로 복원
+    
+    const imageSize = 16; 
     const arrowColor = '#4285F4'; // 화살표 색상
     
-    // 마커 아이콘 설정 - 마커는 작게, 방향 표시기는 적당하게
     this.currentLocationIcon = {
       content: `<div style="
         position: relative;
@@ -631,7 +630,7 @@ class MapService {
     return this.locationTrackingMode;
   }
   
-  // 지도 강제 새로고침 함수 추가
+  // 지도 새로고침 함수
   refresh(clearCache = true) {
     console.log('지도 강제 새로고침 실행');
     
