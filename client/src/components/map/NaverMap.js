@@ -183,9 +183,9 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
             onCurrentLocationUpdate(quickPosition);
           }
           
-          // 기본적으로 NoFollow 모드로 설정
-          mapService.current.setLocationTrackingMode('NoFollow');
-          setTrackingMode('NoFollow');
+          // 실시간 자동 추적을 위해 Follow 모드로 설정
+          mapService.current.setLocationTrackingMode('Follow');
+          setTrackingMode('Follow');
           setIsFollowingUser(true);
           
           // 세션 스토리지에 위치 저장
@@ -214,9 +214,9 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
             onCurrentLocationUpdate(precisePosition);
           }
           
-          // 기본적으로 NoFollow 모드로 설정
-          mapService.current.setLocationTrackingMode('NoFollow');
-          setTrackingMode('NoFollow');
+          // 실시간 자동 추적을 위해 Follow 모드로 설정
+          mapService.current.setLocationTrackingMode('Follow');
+          setTrackingMode('Follow');
           setIsFollowingUser(true);
           
           // 세션 스토리지에 위치 저장
@@ -262,9 +262,9 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
             onCurrentLocationUpdate(defaultPosition);
           }
           
-          // 기본적으로 NoFollow 모드로 설정
-          mapService.current.setLocationTrackingMode('NoFollow');
-          setTrackingMode('NoFollow');
+          // 실시간 자동 추적을 위해 Follow 모드로 설정
+          mapService.current.setLocationTrackingMode('Follow');
+          setTrackingMode('Follow');
           setIsFollowingUser(true);
         }
         

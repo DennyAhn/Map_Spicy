@@ -56,6 +56,15 @@ const MapContainer = ({
     setShowListPanel(activeFilters.length > 0);
   }, [activeFilters]);
 
+  
+  useEffect(() => {
+    if (mapServiceRef.current) {
+      
+      console.log('지도 준비 완료, 실시간 위치 추적을 시작합니다.');
+      mapServiceRef.current.setLocationTrackingMode('Follow');
+    }
+  }, [mapServiceRef.current]);
+
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
 
   // API에서 데이터 가져오기

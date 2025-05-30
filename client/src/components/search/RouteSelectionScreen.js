@@ -147,6 +147,15 @@ const RouteSelectionScreen = ({
     }
   }, [isMapInitialized, startLocation, destination, routeType, drawRoute]);
 
+  // 지도가 초기화되면 자동으로 실시간 위치 추적 시작
+  useEffect(() => {
+    if (isMapInitialized && mapServiceRef.current) {
+      console.log('경로 선택 화면에서 실시간 위치 추적을 시작합니다.');
+      setIsFollowing(true);
+      startFollowing();
+    }
+  }, [isMapInitialized, startFollowing]);
+
   // 실시간 위치 추적 기능
   const startFollowing = useCallback(() => {
     if (!mapServiceRef.current) return;
@@ -157,7 +166,7 @@ const RouteSelectionScreen = ({
       mapServiceRef.current.setZoomLevel(17); // 더 가까운 줌 레벨로 설정
     }
 
-    // 위치 추적 시작
+    
     watchPositionId.current = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -166,10 +175,8 @@ const RouteSelectionScreen = ({
         // 현재 위치 마커 업데이트
         mapServiceRef.current.updateCurrentLocation(newCoords);
         
-        // 따라가기 모드가 활성화된 경우에만 지도 중심 이동
-        if (isFollowing) {
-          mapServiceRef.current.panTo(newCoords);
-        }
+        // 실시간 자동 추적 - 항상 지도 중심 이동
+        mapServiceRef.current.panTo(newCoords);
       },
       (error) => {
         console.error('위치 추적 오류:', error);
@@ -178,11 +185,11 @@ const RouteSelectionScreen = ({
       },
       {
         enableHighAccuracy: true,
-        maximumAge: 1000, // 1초 이내의 캐시된 위치만 사용
+        maximumAge: 0, 
         timeout: 5000
       }
     );
-  }, [startLocation, isFollowing]);
+  }, [startLocation]);
 
   // 위치 추적 중지
   const stopFollowing = useCallback(() => {
