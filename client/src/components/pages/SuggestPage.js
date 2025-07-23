@@ -3,13 +3,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './SuggestPage.css';
-import { API_BASE_URL } from '../../config/api';
+
 
 const SuggestPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const mapRef = useRef(null);
   const [mapVisible, setMapVisible] = useState(false);
+   
 
   const [formData, setFormData] = useState({
     title: '',
@@ -111,6 +112,7 @@ const SuggestPage = () => {
     }
 
     try {
+      const API_BASE_URL = "https://moyak.store";
       const response = await axios.post(`${API_BASE_URL}/api/preprocess/analyze`, {
         title: formData.title,
         content: formData.description,

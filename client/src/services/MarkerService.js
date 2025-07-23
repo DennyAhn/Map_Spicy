@@ -10,6 +10,8 @@ class MarkerService {
   }
 
   toggleMarkers(mapInstance, places, category) {
+    console.log(`MarkerService.toggleMarkers 호출: ${category}, ${places.length}개 장소`);
+    
     if (this.toggleTimeout) {
       clearTimeout(this.toggleTimeout);
     }
@@ -18,6 +20,7 @@ class MarkerService {
       this.toggleTimeout = setTimeout(() => {
         if (this.markers.has(category)) {
           const markers = this.markers.get(category);
+          console.log(`기존 ${category} 마커 ${markers.length}개 제거`);
           if (this.activeInfoWindow) {
             this.activeInfoWindow.close();
             this.activeInfoWindow = null;
@@ -29,15 +32,23 @@ class MarkerService {
           this.markers.delete(category);
         }
 
-        const newMarkers = places.map(place => {
+        const newMarkers = places.map((place, index) => {
+          console.log(`${category} 마커 ${index + 1} 생성:`, place);
           const marker = this.createMarker(mapInstance, place, category);
+          
+          if (!marker) {
+            console.error(`마커 생성 실패 - 인덱스 ${index}:`, place);
+            return null;
+          }
+
           const infoWindow = this.createInfoWindow(mapInstance, place, category);
           this.infoWindows.set(marker, infoWindow);
           this.addMarkerClickEvent(marker, infoWindow, mapInstance, place, category);
           return marker;
-        });
+        }).filter(marker => marker !== null); // null 마커 제거
 
         this.markers.set(category, newMarkers);
+        console.log(`${category} 마커 ${newMarkers.length}개 생성 완료`);
         resolve(true);
       }, 10);
     });
@@ -45,8 +56,26 @@ class MarkerService {
 
   // 마커 생성 메서드
   createMarker(mapInstance, place, category) {
-    return new naver.maps.Marker({
-      position: new naver.maps.LatLng(place.latitude, place.longitude),
+    console.log(`마커 생성 시도 - 카테고리: ${category}, 위치:`, {
+      latitude: place.latitude,
+      longitude: place.longitude,
+      coords: place.coords,
+      원본데이터: place
+    });
+
+    // 위치 정보 검증
+    const lat = place.latitude || place.coords?.latitude;
+    const lng = place.longitude || place.coords?.longitude;
+
+    if (!lat || !lng) {
+      console.error(`마커 생성 실패 - 위치 정보 없음:`, { lat, lng, place });
+      return null;
+    }
+
+    console.log(`마커 생성 중 - 위도: ${lat}, 경도: ${lng}`);
+
+    const marker = new naver.maps.Marker({
+      position: new naver.maps.LatLng(lat, lng),
       map: mapInstance,
       title: place.name,
       icon: {
@@ -55,6 +84,9 @@ class MarkerService {
         anchor: new naver.maps.Point(12, 12)
       }
     });
+
+    console.log(`마커 생성 완료 - ${place.name || category}`);
+    return marker;
   }
 
   // 정보창 생성 메서드

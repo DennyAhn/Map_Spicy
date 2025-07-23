@@ -1,7 +1,6 @@
 const tmapService = require('../services/tmapService');
 const cctvService = require('../services/cctvService');
-
-const { safetyService, storeService } = require('../services/safetyService');
+const { safetyService } = require('../services/safetyService');
 
 // 좌표 객체를 문자열로 변환하는 헬퍼 함수
 const formatCoords = (coords) => {
@@ -43,8 +42,10 @@ const directionController = {
   getNormalRoute: async (req, res) => {
     try {
       const { start, goal } = req.query;
+      console.log('🛣️ [Server] 일반 경로 요청 수신:', { start, goal });
 
       if (!start || !goal) {
+        console.log('❌ [Server] 일반 경로 요청 실패: 필수 파라미터 누락');
         return res.status(400).json({
           success: false,
           error: "출발지와 도착지 좌표가 필요합니다."
@@ -54,12 +55,12 @@ const directionController = {
       // 객체를 문자열로 변환
       const startCoord = typeof start === 'object' ? formatCoords(start) : start;
       const goalCoord = typeof goal === 'object' ? formatCoords(goal) : goal;
-/*
-      console.log('최단 경로 검색 요청:', {
+
+      console.log('🚀 [Server] 일반 경로 처리 시작:', {
         start: startCoord,
-        goal: goalCoord
+        goal: goalCoord,
+        requestType: 'NORMAL'
       });
-      */
 
       // 최단 경로 옵션 추가
       const routeOptions = {
@@ -72,12 +73,13 @@ const directionController = {
       };
 
       const route = await tmapService.getRoute(startCoord, goalCoord, routeOptions);
+      console.log('✅ [Server] 일반 경로 응답 성공');
       res.json({
         success: true,
         data: route
       });
     } catch (error) {
-      console.error("최단 경로 검색 실패:", error);
+      console.error('❌ [Server] 일반 경로 검색 실패:', error);
       res.status(500).json({
         success: false,
         error: error.message || "경로 검색 중 오류가 발생했습니다."
@@ -89,11 +91,25 @@ const directionController = {
   getSafeRoute: async (req, res) => {
     try {
       const { start, goal } = req.query;
-      //console.log('안전 경로 검색 시작:', { start, goal });
+      console.log('🛡️ [Server] 안전 경로 요청 수신:', { start, goal });
+
+      if (!start || !goal) {
+        console.log('❌ [Server] 안전 경로 요청 실패: 필수 파라미터 누락');
+        return res.status(400).json({
+          success: false,
+          error: "출발지와 도착지 좌표가 필요합니다."
+        });
+      }
 
       // 객체를 문자열로 변환
       const startCoord = typeof start === 'object' ? formatCoords(start) : start;
       const goalCoord = typeof goal === 'object' ? formatCoords(goal) : goal;
+
+      console.log('🚀 [Server] 안전 경로 처리 시작:', {
+        start: startCoord,
+        goal: goalCoord,
+        requestType: 'SAFE'
+      });
 
       // CCTV 데이터 가져오기
       const cctvData = await cctvService.getCCTVData();
@@ -111,14 +127,14 @@ const directionController = {
 
       // 최적 경로 선택
       const bestRoute = safetyService.selectBestRoute(validRoutes);
-      /*console.log('최적 경로 선택:', {
+      console.log('✅ [Server] 안전 경로 응답 성공:', {
         safety: bestRoute.safety,
         cctvCount: bestRoute.safety.cctvCount,
         storeCount: bestRoute.safety.storeCount,
         coverageRatio: bestRoute.safety.coverageRatio,
         totalDistance: bestRoute.features[0].properties.totalDistance,
         totalTime: bestRoute.features[0].properties.totalTime
-      });*/
+      });
 
       res.json({
         success: true,
@@ -126,7 +142,7 @@ const directionController = {
       });
 
     } catch (error) {
-      console.error('안전 경로 검색 실패:', error);
+      console.error('❌ [Server] 안전 경로 검색 실패:', error);
       res.status(500).json({
         success: false,
         error: error.message || '안전 경로 검색에 실패했습니다.'

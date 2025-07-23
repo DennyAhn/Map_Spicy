@@ -7,7 +7,7 @@ export const fetchPolicePlacesData = async (lat, lng) => {
         lat: lat,
         lng: lng
       });
-
+      
       const response = await fetch(`${API_BASE_URL}/api/policePlaces?${params}`);
       
       if (!response.ok) {

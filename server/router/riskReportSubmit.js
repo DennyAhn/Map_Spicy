@@ -2,6 +2,13 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
+/**
+ * @swagger
+ * tags:
+ *   name: RiskReport
+ *   description: 위험구간 신고 API
+ */
+
 // 위험 단어별 점수 설정
 const dangerKeywordScores = {
   '위험': 3,
@@ -49,7 +56,99 @@ function calculateDanger(reason = '', category = '') {
   return { score, level };
 }
 
-// POST: 위험 제보 저장
+/**
+ * @swagger
+ * /api/risk-report-submit:
+ *   post:
+ *     summary: 위험구간 신고 제출
+ *     tags: [RiskReport]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - reason
+ *               - start_lat
+ *               - start_lng
+ *               - end_lat
+ *               - end_lng
+ *             properties:
+ *               reason:
+ *                 type: string
+ *                 description: 신고 사유
+ *                 example: "가로등이 없어서 너무 어둡습니다"
+ *               category:
+ *                 type: string
+ *                 enum: [좁은 길목, 보도블럭 파손, 쓰레기 무단 투기, CCTV 부재, 가로등 부재, 기타]
+ *                 description: 위험 카테고리
+ *                 example: "가로등 부재"
+ *               start_lat:
+ *                 type: number
+ *                 format: double
+ *                 description: 시작점 위도
+ *                 example: 37.5665
+ *               start_lng:
+ *                 type: number
+ *                 format: double
+ *                 description: 시작점 경도
+ *                 example: 126.9780
+ *               end_lat:
+ *                 type: number
+ *                 format: double
+ *                 description: 끝점 위도
+ *                 example: 37.5663
+ *               end_lng:
+ *                 type: number
+ *                 format: double
+ *                 description: 끝점 경도
+ *                 example: 126.9779
+ *               user_type:
+ *                 type: string
+ *                 enum: [women, elderly, wheelchair, general]
+ *                 description: 사용자 유형
+ *                 example: "women"
+ *               age:
+ *                 type: integer
+ *                 minimum: 1
+ *                 maximum: 150
+ *                 description: 사용자 연령
+ *                 example: 25
+ *     responses:
+ *       201:
+ *         description: 위험구간 신고 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 id:
+ *                   type: integer
+ *                   description: 생성된 신고 ID
+ *                 score:
+ *                   type: number
+ *                   description: 위험도 점수
+ *                 level:
+ *                   type: string
+ *                   enum: [낮음, 중간, 높음]
+ *                   description: 위험도 등급
+ *       400:
+ *         description: 잘못된 요청 (필수 항목 누락)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: 서버 오류
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.post('/', async (req, res) => {
   const {
     reason,

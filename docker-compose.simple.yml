@@ -1,0 +1,14 @@
+# 심플 Docker Compose - 서버만 컨테이너화
+version: '3.8'
+
+services:
+  api-server:
+    build: ./server
+    container_name: map-server
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env.simple           # DB 연결 정보
+      - ./server/.env         # 기존 API 키들
+    network_mode: host        # EC2의 MySQL에 직접 접근

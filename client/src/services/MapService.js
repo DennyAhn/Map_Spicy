@@ -38,10 +38,11 @@ class MapService {
       console.log('Current zoom level:', zoomLevel);
     });
 
-    
+    // 지도 이동 시 이벤트 - 추적 모드가 활성화된 경우 NoFollow 모드로 변경
     naver.maps.Event.addListener(this.mapInstance, 'dragend', () => {
-     
-      console.log('지도 드래그 감지 - 실시간 추적 모드에서는 추적을 유지합니다.');
+      if (this.locationTrackingMode === 'Follow') {
+        this.setLocationTrackingMode('NoFollow');
+      }
     });
 
     // 초기 위치 설정 - 점진적 접근법 사용
@@ -100,10 +101,11 @@ class MapService {
   
   // 방향성 있는 아이콘 업데이트
   updateDirectionalIcon() {
-    
-    const imageSize = 16; 
+    // 마커 크기를 최초 크기로 복원
+    const imageSize = 16; // 최초 크기로 복원
     const arrowColor = '#4285F4'; // 화살표 색상
     
+    // 마커 아이콘 설정 - 마커는 작게, 방향 표시기는 적당하게
     this.currentLocationIcon = {
       content: `<div style="
         position: relative;
@@ -213,8 +215,8 @@ class MapService {
       },
       {
         enableHighAccuracy: true,
-        maximumAge: 0, 
-        timeout: 5000 
+        maximumAge: 5000,
+        timeout: 10000
       }
     );
   }
@@ -297,8 +299,8 @@ class MapService {
     return new Promise((resolve, reject) => {
       const options = {
         enableHighAccuracy: highAccuracy,
-        timeout: highAccuracy ? 10000 : 5000, 
-        maximumAge: highAccuracy ? 0 : 0 
+        timeout: highAccuracy ? 15000 : 5000, // 고정밀 모드는 더 긴 타임아웃
+        maximumAge: highAccuracy ? 0 : 60000 // 고정밀 모드는 캐시 사용 안 함
       };
       
       navigator.geolocation.getCurrentPosition(
@@ -629,7 +631,7 @@ class MapService {
     return this.locationTrackingMode;
   }
   
-  // 지도 새로고침 함수
+  // 지도 강제 새로고침 함수 추가
   refresh(clearCache = true) {
     console.log('지도 강제 새로고침 실행');
     
@@ -658,6 +660,19 @@ class MapService {
         }, 100);
       }, 100);
     }
+  }
+
+  /** 컨테이너 크기 변화 후 강제 리프레시 */
+  forceResize() {
+    if (this.mapInstance) {
+      naver.maps.Event.trigger(this.mapInstance, 'resize');
+      console.log('🔄 지도 강제 리사이즈 실행');
+    }
+  }
+
+  /** 외부에서 map 인스턴스를 가져올 때 */
+  getMapInstance() {
+    return this.mapInstance;
   }
 }
 

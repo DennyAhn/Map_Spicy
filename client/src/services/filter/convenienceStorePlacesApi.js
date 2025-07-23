@@ -1,4 +1,4 @@
-import { API_BASE_URL, PROXY_URL } from '../../config/api';
+import { API_BASE_URL } from '../../config/api';
 
 export const fetchConvenienceStorePlacesData = async (lat, lng) => {
   try {
@@ -8,7 +8,7 @@ export const fetchConvenienceStorePlacesData = async (lat, lng) => {
       lng: lng
     });
     
-    const response = await fetch(`${PROXY_URL}/api/ConvenienceStores?${params}`);
+    const response = await fetch(`${API_BASE_URL}/api/ConvenienceStores?${params}`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch Convenience Store places: ${response.status}`);

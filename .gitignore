@@ -26,3 +26,8 @@
 # 포함할 폴더
 !client/
 !server/
+
+# 환경변수 파일 (보안상 제외)
+.env
+server/.env
+client/.env

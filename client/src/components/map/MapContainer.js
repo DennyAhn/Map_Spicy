@@ -56,15 +56,6 @@ const MapContainer = ({
     setShowListPanel(activeFilters.length > 0);
   }, [activeFilters]);
 
-  
-  useEffect(() => {
-    if (mapServiceRef.current) {
-      
-      console.log('지도 준비 완료, 실시간 위치 추적을 시작합니다.');
-      mapServiceRef.current.setLocationTrackingMode('Follow');
-    }
-  }, [mapServiceRef.current]);
-
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
 
   // API에서 데이터 가져오기
@@ -96,17 +87,18 @@ const MapContainer = ({
         }
       }
       
-      // 지하철역 엘리베이터 또는 외국인 주의구역인 경우 placesApi에서 직접 데이터 가져오기
+      // 모든 카테고리는 placesApi의 getPlacesForFilter 함수에서 처리
+      const { getPlacesForFilter } = await import('../../services/placesApi');
+      const placesData = await getPlacesForFilter(category, { lat: latitude, lng: longitude });
+      
+      if (!placesData || placesData.length === 0) {
+        console.log(`${category}에 대한 데이터가 없습니다.`);
+        return [];
+      }
+      
+      // 하드코딩 데이터인 경우 (latitude/longitude만 있는 경우)
       if (category === '지하철역 엘리베이터' || category === '외국인 주의구역') {
-        // placesApi의 getPlacesForFilter 함수를 가져오기
-        const { getPlacesForFilter } = await import('../../services/placesApi');
-        
-        // 직접 하드코딩된 좌표 데이터 가져오기
-        const placesData = await getPlacesForFilter(category, { lat: latitude, lng: longitude });
-        
-        // 좌표 데이터만 가지고 있으므로 기본 정보 추가
         const formattedData = placesData.map((item, index) => {
-          // 각 장소까지의 거리 계산
           const distance = calculateDistance(
             latitude,
             longitude,
@@ -117,7 +109,7 @@ const MapContainer = ({
           return {
             id: `${category}-${index}`,
             name: `${category} ${index + 1}`,
-            address: null, // null로 설정하여 주소 표시 안 함
+            address: null,
             distance: distance,
             latitude: item.latitude,
             longitude: item.longitude
@@ -127,70 +119,33 @@ const MapContainer = ({
         console.log(`${category} 데이터 변환 완료:`, formattedData.length);
         return formattedData;
       }
+
+      // RESTful API 데이터인 경우 - 서버에서 정규화된 데이터 사용
+      console.log(`${category} RESTful API 응답:`, placesData);
       
-      // 기타 카테고리는 API 호출로 처리
-      // 카테고리에 따른 API 엔드포인트 매핑
-      const categoryApiMap = {
-        '편의점': '/api/ConvenienceStores',
-        '소방시설': '/api/fireStationPlaces',
-        '경찰서': '/api/policePlaces',
-        '안전비상벨': '/api/womenPlaces',
-        'CCTV': '/api/cctvPlaces',
-        '약국': '/api/pharmacyPlaces',
-        '휠체어 충전소': '/api/wheelChairPlaces',
-        '복지시설': '/api/elderlyPlaces',
-      };
-      
-      const apiEndpoint = categoryApiMap[category];
-      if (!apiEndpoint) {
-        throw new Error(`${category}에 대한 API 엔드포인트가 정의되지 않았습니다`);
+      if (placesData && placesData.length > 0) {
+        console.log(`첫 번째 항목 세부 정보:`, placesData[0]);
+        console.log('사용 가능한 속성:', Object.keys(placesData[0]));
       }
       
-      const apiUrl = `${API_BASE_URL}${apiEndpoint}?lat=${latitude}&lng=${longitude}`;
-      console.log(`API 요청 URL: ${apiUrl}`);
-      
-      // API 호출
-      const response = await fetch(apiUrl);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`API 응답 에러: ${response.status} ${errorText}`);
-        throw new Error(`데이터를 가져오는데 실패했습니다 (${response.status})`);
-      }
-      
-      const data = await response.json();
-      console.log(`${category} 데이터 응답:`, data);
-      
-      // 데이터의 첫 번째 항목의 모든 속성 출력 (디버깅)
-      if (data && data.length > 0) {
-        console.log(`첫 번째 항목 세부 정보:`, data[0]);
-        console.log(`name 속성: "${data[0].name}"`);
-        console.log(`address 속성: "${data[0].address}"`);
-        console.log(`distance 속성: "${data[0].distance}"`);
-        // 모든 키 출력
-        console.log('사용 가능한 속성:', Object.keys(data[0]));
-      }
-      
-      if (!data || data.length === 0) {
-        console.log(`${category}에 대한 데이터가 없습니다.`);
-        return [];
-      }
-      
-      // 서버에서 이미 모든 정보가 포함된 형태로 반환되므로 그대로 사용
-      // 하지만 필요한 속성이 없을 경우를 대비하여 기본값 설정
-      const formattedData = data.map(item => ({
+      // 서버에서 이미 정규화된 형태로 반환되므로 그대로 사용
+      const formattedData = placesData.map(item => ({
         ...item,
         id: item.id || `${category}-${Math.random().toString(36).substr(2, 9)}`,
-        name: item.name || `${category}`, 
-        address: item.address || '주소 정보 없음',
-        distance: item.distance || '거리 정보 없음',
+        name: item.place_name || item.name || `${category}`, 
+        address: item.address_name || item.address || '주소 정보 없음',
+        distance: item.distance ? `${Math.round(item.distance)}m` : '거리 정보 없음',
+        // 위치 정보 정규화 - 서버 응답 구조에 맞춤
+        latitude: item.location?.lat || item.latitude,
+        longitude: item.location?.lng || item.longitude,
         coords: {
-          latitude: item.latitude,
-          longitude: item.longitude
+          latitude: item.location?.lat || item.latitude,
+          longitude: item.location?.lng || item.longitude
         }
       }));
       
       console.log(`${category} 데이터 변환 완료:`, formattedData.length);
+      console.log(`첫 번째 변환된 아이템:`, formattedData[0]);
       return formattedData;
     } catch (err) {
       console.error(`API 호출 오류 (${category}):`, err);

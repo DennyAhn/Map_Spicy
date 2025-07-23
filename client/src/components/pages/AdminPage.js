@@ -6,7 +6,8 @@ import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, ArcElement, T
 import axios from 'axios';
 import styles from './AdminPage.module.css'; // ✅ 수정된 모듈 스타일
 import AdminDangerMap from './AdminDangerMap';
-import { API_BASE_URL } from '../../config/api';
+
+
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend);
 
@@ -56,7 +57,8 @@ const AdminPage = () => {
   useEffect(() => {
     const fetchComplaints = async () => {
       try {
-        const result = await axios.get(`${API_BASE_URL}/api/complaints`);
+         const API_BASE_URL = "https://moyak.store";
+        const result = await axios.get(`${API_BASE_URL}/complaints`);
         setComplaints(result.data);
         setFiltered(result.data);
         generateCharts(result.data);

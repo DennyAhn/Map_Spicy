@@ -1,4 +1,4 @@
-import { API_BASE_URL, PROXY_URL } from '../../config/api';
+import { API_BASE_URL } from '../../config/api';
 
 export const fetchWheelChairPlacesData = async (lat, lng) => {
   try {
@@ -7,8 +7,8 @@ export const fetchWheelChairPlacesData = async (lat, lng) => {
       lat: lat,
       lng: lng
     });
-
-    const response = await fetch(`${PROXY_URL}/api/wheelChairPlaces?${params}`);
+    
+    const response = await fetch(`${API_BASE_URL}/api/wheelChairPlaces?${params}`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch wheelchair charging places: ${response.status}`);
