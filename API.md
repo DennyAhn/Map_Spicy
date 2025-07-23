@@ -6,15 +6,15 @@
 
 Map Spicy는 여성, 고령자, 휠체어 이용자 등을 위한 안전한 경로 검색과 주변 편의시설 정보를 제공하는 서비스입니다.
 
-## 🚀 서버 정보
+##  서버 정보
 
 - **개발 서버**: `http://localhost:3001`
 - **프로덕션 서버**: `https://moyak.store`
 - **Swagger 문서**: `http://localhost:3001/api-docs`
 
-## 📚 API 카테고리
+##  API 카테고리
 
-### 1. 🗺️ 경로 검색 API
+### 1.  경로 검색 API
 
 #### 일반 최단경로 검색
 ```http
@@ -55,7 +55,7 @@ GET /direction/safe-direction?start=37.5665,126.9780&goal=37.5663,126.9779
 }
 ```
 
-### 2. 📍 장소 검색 API (RESTful)
+### 2.  장소 검색 API (RESTful)
 
 #### 지원 카테고리 조회
 ```http
@@ -84,7 +84,7 @@ GET /api/places?category=police&lat=37.5665&lng=126.9780&radius=3000&limit=10
 - `radius` (선택): 검색 반경(미터, 기본값: 5000)
 - `limit` (선택): 결과 개수(기본값: 15, 최대: 15)
 
-### 3. 🏢 민원 및 위험구간 API
+### 3.  민원 및 위험구간 API
 
 #### 민원 등록
 ```http
@@ -121,7 +121,7 @@ Content-Type: application/json
 GET /api/complaintsmap
 ```
 
-### 4. 🛠️ 기타 API
+### 4.  기타 API
 
 #### 지오코딩 (주소 ↔ 좌표 변환)
 ```http
@@ -140,7 +140,7 @@ Content-Type: application/json
 }
 ```
 
-## 🔧 에러 응답 형식
+##  에러 응답 형식
 
 모든 API는 다음과 같은 일관된 에러 응답 형식을 사용합니다:
 
@@ -158,7 +158,7 @@ Content-Type: application/json
 - `404` - 리소스를 찾을 수 없음
 - `500` - 서버 내부 오류
 
-## 🧪 테스트 방법
+##  테스트 방법
 
 ### 1. Swagger UI 사용
 브라우저에서 `http://localhost:3001/api-docs`에 접속하여 인터랙티브한 API 테스트
@@ -190,14 +190,13 @@ const places = await fetch(
 const placesData = await places.json();
 ```
 
-## 📈 성능 및 제한사항
+##  성능 및 제한사항
 
-- **Rate Limiting**: API 요청은 사용자당 분당 100회로 제한됩니다
 - **캐싱**: 경로 검색 결과는 클라이언트에서 캐싱됩니다
 - **응답 시간**: 평균 응답 시간은 200-500ms입니다
-- **지원 지역**: 대한민국 전체 (일부 API는 서울/수도권 중심)
+- **지원 지역**: 대구 계명대 성서캠퍼스
 
-## 🔍 개발자 가이드
+##  개발자 가이드
 
 ### 환경 설정
 ```bash
@@ -224,10 +223,10 @@ DB_PASSWORD=password
 DB_NAME=map_spicy
 ```
 
-## 📞 지원 및 문의
+##  지원 및 문의
 
-- **이메일**: support@moyak.store
-- **GitHub**: [프로젝트 저장소]
+- **이메일**: gyeonghyeongib@gmail.com
+- **GitHub**: https://github.com/asd1702/Map-Spicy
 - **문서 버전**: v1.0.0
 - **마지막 업데이트**: 2025-07-23
 
