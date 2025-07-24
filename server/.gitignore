@@ -1,0 +1,17 @@
+# 환경변수 파일
+.env
+
+# 로그 파일
+*.log
+logs/
+
+# 의존성 디렉토리
+node_modules/
+
+# 빌드 결과물
+dist/
+build/
+
+# OS 생성 파일
+.DS_Store
+Thumbs.db

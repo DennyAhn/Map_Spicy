@@ -1,0 +1,277 @@
+.guide-container {
+  width: 80vw;
+  height: 100vh;
+  margin: 0 auto;
+  padding: 2rem;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.guide-container .back-button-term {
+  background: none;
+  border: none;
+  color: #3498db;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.guide-container .back-button-term:hover {
+  text-decoration: underline;
+}
+
+.guide-container .guide-title {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 3px solid #3498db;
+  padding-bottom: 1rem;
+}
+
+.guide-container .guide-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.guide-container .instruction-card {
+  display: flex;
+  align-items: start;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.guide-container .step-number {
+  width: 40px;
+  height: 40px;
+  background: #3498db;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.guide-container .step-content {
+  flex: 1;
+}
+
+.guide-container .feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.guide-container .feature-card {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.guide-container .feature-card:hover {
+  transform: translateY(-3px);
+}
+
+.guide-container .feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.guide-container .function-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.guide-container .function-item {
+  padding: 1.2rem;
+  background: white;
+  border-left: 4px solid #3498db;
+  border-radius: 5px;
+}
+
+.guide-container .emergency-info {
+  background: #fff3f3;
+  border: 2px solid #ff6b6b;
+}
+
+.guide-container .emergency-steps {
+  counter-reset: step;
+  padding-left: 2rem;
+}
+
+.guide-container .emergency-steps li {
+  counter-increment: step;
+  margin: 1rem 0;
+  position: relative;
+}
+
+.guide-container .emergency-steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: -2rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: #ff6b6b;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.5rem;
+}
+
+.guide-container .highlight {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.guide-container .icon-sample {
+  display: inline-block;
+  margin: 0 5px;
+}
+
+/* 📱 모바일 반응형 (720px 이하) */
+@media (max-width: 720px) {
+  .guide-container {
+    width: 100%;
+    padding: 1rem;
+    margin: 0;
+  }
+
+  .guide-container .guide-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom-width: 2px;
+  }
+
+  .guide-container .guide-section {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+  }
+
+  .guide-container .instruction-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
+
+  .guide-container .step-number {
+    width: 40px;
+    height: 40px;
+    background: #3498db;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .guide-container .step-content {
+    flex: 1;
+  }
+  
+  .guide-container .step-content h3 {
+    display: inline-flex; /* ✅ h3만 inline-flex로 */
+    align-items: center;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .guide-container .step-content li {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .guide-container .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .guide-container .feature-card {
+    padding: 1.2rem;
+    background: white;
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.2s;
+    overflow: hidden; /* 넘치는 텍스트 숨김 */
+    text-overflow: ellipsis;
+    white-space: normal; /* 여러 줄 허용 */
+    word-break: keep-all; /* 단어 단위로 끊기 */
+  }
+
+  .guide-container .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .guide-container .function-item {
+    padding: 1rem;
+    border-left-width: 3px;
+  }
+
+  .guide-container .back-button-term {
+    position: static;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    color: #3498db;
+    font-size: 1rem;
+    margin-bottom: 0.1rem;
+    cursor: pointer;
+    text-align: left;
+  }  
+
+  /* 본 페이지에만 적용되도록 한정 */
+  .guide-container h2 {
+    font-size: 1.2rem;
+    margin: 0.8rem 0;
+  }
+
+  .guide-container p,
+  .guide-container li {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .guide-container .step-content ul {
+    margin-top: 8px;
+    padding-left: 20px;
+  }
+
+  .guide-container .function-item h3 {
+    font-size: 1rem;
+  }
+
+  .guide-container .step-content ul li {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .guide-container button,
+  .guide-container .feature-card {
+    min-height: 48px;
+  }
+}

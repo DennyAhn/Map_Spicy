@@ -1,0 +1,90 @@
+/* src/pages/SupportPage.css */
+.support-container {
+    max-width: 800px;
+    margin: 1rem auto;
+    padding: 1rem;
+  }
+  
+  .faq-section {
+    margin: 2rem 0;
+  }
+  
+  .faq-item {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #f9f9f9;
+    border-radius: 6px;
+    border-left: 4px solid #3498db;
+  }
+  
+  .question {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+  }
+  
+  .answer {
+    color: #555;
+    margin-left: 1rem;
+    font-size: 0.95rem;
+  }
+  
+
+  .back-button-support {
+    background: none;
+    border: none;
+    color: #3498db;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .back-button-support:hover {
+    text-decoration: underline;
+  }  
+
+  .question::before {
+    content: '▶';
+    color: #3498db;
+    font-size: 0.8em;
+    padding-right: 3px;
+  }
+  
+  .answer.active {
+    display: block;
+  }
+  
+  .inquiry-form {
+    margin-top: 3rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    text-align: center;
+    display: block;
+  }
+  
+  .inquiry-form input,
+  .inquiry-form textarea {
+    width: 85%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .inquiry-form textarea,
+  .inquiry-form button {
+    display: block;
+    margin: 0 auto 1rem auto;
+  }
+
+  .inquiry-form input {
+    margin-top: 1rem;
+  }
+
+  .inquiry-form button {
+    width: 200px;
+    height: 35px;
+    border-radius: 30px;
+    margin-bottom: 1rem;
+  }

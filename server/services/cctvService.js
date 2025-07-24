@@ -3,11 +3,17 @@ const fetch = require("node-fetch");
 const cctvService = {
   getCCTVData: async () => {
     try {
-      // 일반 인증키 (Decoding)
-      const serviceKey = 'tM2CcqNLmOh1H/mJrtUz+Q/v20hppCEEet5Xc1OqN3V+5tn90SEVQ8GqGRdhp5Slcq/4xEUF8AmXoBBIP75gdg==';
+      // 환경변수에서 API 키와 URL 가져오기
+      const serviceKey = process.env.CCTV_API_KEY;
+      const apiUrl = process.env.CCTV_API_URL;
       
-      // URL 구성 (새로운 URL로 수정)
-      const url = 'https://api.odcloud.kr/api/15083776/v1/uddi:c311f3b0-6de3-4269-b4b3-bd3ea8eedbff';
+      if (!serviceKey) {
+        throw new Error('CCTV 서비스 키가 설정되지 않았습니다. .env 파일에 CCTV_API_KEY를 설정해주세요.');
+      }
+      
+      if (!apiUrl) {
+        throw new Error('CCTV API URL이 설정되지 않았습니다. .env 파일에 CCTV_API_URL을 설정해주세요.');
+      }
       
       // 요청 파라미터 구성
       const queryParams = new URLSearchParams({
@@ -17,7 +23,7 @@ const cctvService = {
         returnType: 'JSON'  // 응답 형식 지정
       });
 
-      const response = await fetch(`${url}?${queryParams}`, {
+      const response = await fetch(`${apiUrl}?${queryParams}`, {
         method: 'GET',
         headers: {
           'accept': 'application/json',
@@ -50,8 +56,8 @@ const cctvService = {
       }));
 
     } catch (error) {
-      //console.error('CCTV 데이터 요청 실패:', error);
-      throw new Error('CCTV 데이터 가져오기 실패');
+      console.error('CCTV 데이터 가져오기 실패:', error.message);
+      throw new Error(`CCTV 데이터 가져오기 실패: ${error.message}`);
     }
   }
 };

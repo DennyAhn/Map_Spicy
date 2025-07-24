@@ -1,0 +1,33 @@
+# 제외할 폴더
+.cache/
+.config/
+.cursor-server/
+.landscape/
+.local/
+.npm/
+.nvm/
+.pki/
+.rpmpdb/
+.vim/
+.vscode-server/
+.gitconfig/
+
+# 제외할 파일
+.bash_history
+.bash_logout
+.bashrc
+.gitconfig
+.motd_shown
+.profile
+.sudo_as_admin_successful
+.viminfo
+.wsl-config
+
+# 포함할 폴더
+!client/
+!server/
+
+# 환경변수 파일 (보안상 제외)
+.env
+server/.env
+client/.env

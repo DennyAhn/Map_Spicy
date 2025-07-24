@@ -5,22 +5,22 @@ const distanceCalculator = {
     const lat2 = parseFloat(point2.latitude);
     const lon2 = parseFloat(point2.longitude);
 
-    console.log(`거리 계산 입력 값: point1(${lat1}, ${lon1}), point2(${lat2}, ${lon2})`);
+    console.log(`?? ?? ?? ?: point1(${lat1}, ${lon1}), point2(${lat2}, ${lon2})`);
 
     if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
-      console.error('거리 계산 중 NaN 발생: 입력 값이 유효하지 않습니다.');
+      console.error('?? ?? ? NaN ??: ?? ?? ???? ????.');
       return NaN;
     }
 
-    const R = 6371e3; // 지구 반경 (미터)
-    const φ1 = lat1 * Math.PI / 180;
-    const φ2 = lat2 * Math.PI / 180;
-    const Δφ = (lat2 - lat1) * Math.PI / 180;
-    const Δλ = (lon2 - lon1) * Math.PI / 180;
+    const R = 6371e3; // ?? ?? (??)
+    const �1 = lat1 * Math.PI / 180;
+    const �2 = lat2 * Math.PI / 180;
+    const �� = (lat2 - lat1) * Math.PI / 180;
+    const �� = (lon2 - lon1) * Math.PI / 180;
 
-    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-      Math.cos(φ1) * Math.cos(φ2) *
-      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const a = Math.sin(��/2) * Math.sin(��/2) +
+      Math.cos(�1) * Math.cos(�2) *
+      Math.sin(��/2) * Math.sin(��/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
     return R * c;

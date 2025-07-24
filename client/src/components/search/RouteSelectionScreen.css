@@ -1,3 +1,4 @@
+/* 전체 화면 컨테이너 (지도 배경) */
 .route-selection-screen {
   position: fixed;
   top: 0;
@@ -6,33 +7,37 @@
   bottom: 0;
   background: white;
   z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
 }
 
+/* 지도 컨테이너: 화면 전체 채우기 */
+.map-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #f8f8f8;
+}
+
+/* 상단 입력 필드 (출발지/도착지) */
 .route-header {
-  background: #FFF7E4;
-  padding: 8px 16px 16px 16px;
-}
-
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.back-button {
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: #333;
-  padding: 8px;
-  cursor: pointer;
+  position: absolute;
+  top: 1vh;
+  left: 3vw;
+  right: 3vw;
+  z-index: 1001;
+  background: transparent;
+  padding: 0;
 }
 
 .location-inputs {
+  height: 84px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -42,54 +47,146 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: white;
   padding: 8px 12px;
-  border-radius: 4px;
+  background: rgba(249, 249, 249, 0.7);
+}
+
+.input-row.clickable {
+  height: 24px;
+  justify-content: space-between;
+}
+
+.input-row.clickable:first-child {
+  border-bottom: 1px solid black;
+}
+
+.location-icon img {
+  width: 15px;
+  height: 15px;
+  object-fit: contain;
 }
 
 .location-icon {
   font-size: 16px;
+  color: #555;
 }
 
 .location-input {
   flex: 1;
   border: none;
-  background: none;
+  background: transparent;
   font-size: 14px;
   outline: none;
   padding: 4px 0;
+  color: #333;
 }
 
 .location-input::placeholder {
   color: #999;
 }
 
-.transport-tabs {
-  display: flex;
-  border-bottom: 1px solid #eee;
-}
-
-.transport-tab {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px;
+.back-button {
+  height: 20px;
   background: none;
   border: none;
-  border-bottom: 2px solid transparent;
+  font-size: 14px;
+  color: #444;
+  padding: 2px;
   cursor: pointer;
 }
 
+/* 경로 유형 탭 (일반/안전) - 투명 버전 */
+.transport-tabs {
+  position: absolute;
+  top: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+  background: transparent !important; /* 완전 투명 강제 적용 */
+  gap: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  padding: 0; /* 내부 패딩 제거 */
+  border: none !important; /* 테두리 제거 */
+  box-shadow: none !important; /* 그림자 제거 */
+  backdrop-filter: none !important; /* 블러 효과 제거 */
+}
+
+.transport-tab {
+  width: 120px;
+  height: 45px;
+  padding: 12px 24px;
+  border-radius: 30px;
+  background: rgba(240, 240, 240, 0.9); /* 탭 버튼만 반투명 유지 */
+  border: 1px solid rgba(204, 204, 204, 0.5);
+  color: #444;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
 .transport-tab.active {
-  border-bottom: 2px solid #5347AA;
-  color: #5347AA;
+  background: #006CFF; /* 활성 탭은 불투명 */
+  color: white;
+  border-color: #006CFF;
 }
 
 .tab-icon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* 눌렀을 때 아이콘 흰색으로 변경 */
+.transport-tab.active .tab-icon {
+  filter: brightness(0) invert(1);
+}
+
+.tab-text {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.transport-tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  gap: 12px;
+  padding: 20px 0;
+  background: rgba(255, 255, 255, 0.8); /* 반투명 배경 */
+  border-top: none; /* 테두리 제거 */
+  backdrop-filter: blur(5px); /* 배경 블러 효과 */
+}
+
+.transport-tab {
+  padding: 12px 24px;
+  border-radius: 30px;
+  background: rgba(240, 240, 240, 0.9); /* 반투명 배경 */
+  border: 1px solid rgba(204, 204, 204, 0.5); /* 반투명 테두리 */
+  color: #444;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.transport-tab.active {
+  background: #006CFF;
+  color: white;
+  border-color: #006CFF;
+}
+
+.tab-icon {
+  width: 20px;
+  height: 20px;
   object-fit: contain;
 }
 
@@ -99,20 +196,15 @@
 }
 
 .map-container {
-  position: relative;
-  flex: 1;
-  width: 100%;
-  height: calc(100vh - 180px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: #f8f8f8;
 }
 
-.start-marker {
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  font-size: 24px;
-}
-
+.start-marker,
 .destination-marker {
   width: 30px;
   height: 30px;
@@ -120,10 +212,145 @@
   font-size: 24px;
 }
 
-.input-row.clickable {
+.panel-content {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 15px 10px;
+  background: white;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  gap: 12px;
+}
+
+.panel-content::-webkit-scrollbar {
+  display: none;
+}
+
+.panel-content > div {
+  flex: 0 0 auto;
+  min-width: 200px;
+  border-radius: 10px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.route-info-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.widget-scroll {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0;
+}
+
+.widget-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.route-info-widget {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  white-space: nowrap;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-right: 10px;
+  min-width: 120px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.route-info-widget:last-child {
+  margin-right: 0;
+}
+
+.follow-button {
+  width: 100%;
+  padding: 15px;
+  background-color: #4285f4;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  border-radius: 0;
   cursor: pointer;
 }
 
-.input-row.clickable:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-} 
+.follow-button:hover {
+  background-color: #357ae8;
+}
+
+.move-to-current-button {
+  position: absolute;
+  bottom: 180px;
+  left: 20px;
+  z-index: 1001;
+  background-color: white;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  padding: 8px;
+  transition: all 0.3s ease;
+}
+
+.move-to-current-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+
+ /* 활성화된 버튼 스타일 */
+ .move-to-current-button.active {
+  background-color: #597BEB;
+}
+
+.move-to-current-button.active img {
+  filter: brightness(0) invert(1); /* SVG를 흰색으로 변경 */
+}
+
+.location-pulse-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: rgba(89, 123, 235, 0.2);
+  border-radius: 50%;
+  z-index: 1;
+  animation: locationPulse 2s infinite;
+}
+
+@keyframes locationPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}

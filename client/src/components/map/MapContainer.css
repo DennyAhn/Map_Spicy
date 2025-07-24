@@ -1,379 +1,493 @@
 .map-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  background-color: #F8F8F0; /* 부드러운 배경색 추가 */
-}
-
-/* 헤더 스타일 개선 */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  background: white;
-  border-bottom: 1px solid #eee;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08); /* 그림자 효과 추가 */
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.logo-image {
-  height: 34px; /* 크기 약간 증가 */
-  width: auto;
-  object-fit: contain;
-}
-
-.menu-button {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #3B78E7; /* 메뉴 버튼 색상 변경 */
-}
-
-/* 검색바 스타일 개선 */
-.search-bar {
-  position: fixed;
-  top: 10px; /* 위치 조정 */
-  left: 0;
-  right: 0;
-  width: calc(100% - 24px);
-  max-width: none;
-  margin: 0 12px;
-  z-index: 1001;
-  background: white;
-  border-radius: 8px; /* 라운드 처리 */
-  box-shadow: 0 3px 8px rgba(0,0,0,0.15); /* 그림자 강화 */
-  display: flex;
-  align-items: center;
-  padding: 10px 16px; /* 패딩 증가 */
-  height: 46px; /* 높이 증가 */
-}
-
-.search-icon {
-  width: 22px;
-  height: 22px;
-  margin-right: 12px;
-  color: #3B78E7; /* 아이콘 색상 변경 */
-}
-
-.voice-icon {
-  width: 24px;
-  height: 24px;
-  margin-left: 12px;
-  cursor: pointer;
-  color: #3B78E7; /* 아이콘 색상 변경 */
-}
-
-.menu-icon {
-  width: 24px;
-  height: 24px;
-  margin-left: 12px;
-  cursor: pointer;
-  color: #7A7A7A; /* 아이콘 색상 변경 */
-}
-
-.search-input {
-  flex: 1;
-  border: none;
-  background: none;
-  padding: 8px 0;
-  font-size: 16px;
-  color: #333; /* 텍스트 색상 변경 */
-}
-
-.search-input::placeholder {
-  color: #aaa; /* 플레이스홀더 색상 */
-}
-
-.search-input:focus {
-  outline: none;
-}
-
-/* 필터 버튼 스타일 개선 */
-.filter-buttons-container {
-  position: fixed;
-  top: 66px; /* 위치 조정 */
-  left: 0;
-  right: 0;
-  z-index: 1001;
-  padding: 8px 16px;
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  background-color: rgba(255, 255, 255, 0.85); /* 반투명 배경 */
-  backdrop-filter: blur(5px); /* 블러 효과 */
-  -webkit-backdrop-filter: blur(5px);
-}
-
-.filter-buttons-container::-webkit-scrollbar {
-  display: none;
-}
-
-.filter-buttons-scroll {
-  display: flex;
-  gap: 8px; /* 간격 증가 */
-  width: max-content;
-  padding: 0 8px 8px 0;
-  margin-right: 20px;
-  overflow-x: auto;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  touch-action: pan-x;
-}
-
-.filter-buttons-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.filter-buttons-scroll::after {
-  content: '';
-  display: block;
-  min-width: 20px;
-  height: 1px;
-}
-
-.filter-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background: white;
-  border: none; /* 테두리 제거 */
-  border-radius: 20px;
-  white-space: nowrap;
-  font-size: 14px;
-  flex-shrink: 0;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  user-select: none;
-  -webkit-user-select: none;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 그림자 추가 */
-  color: #555;
-}
-
-.filter-button:hover, .filter-button.active {
-  background-color: #3B78E7; /* 활성화 색상 */
-  color: white;
-}
-
-.filter-button-icon {
-  font-size: 16px;
-  color: inherit;
-}
-
-/* 지도 컨테이너 */
-.map-component-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  flex: 1;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-x pan-y;
-}
-
-/* NaverMap이 사용하는 실제 지도 컨테이너 */
-.map-component-container > div {
-  width: 100% !important;
-  height: 100% !important;
-  touch-action: pan-x pan-y;
-}
-
-/* 확대/축소 컨트롤 스타일 추가 */
-.map-controls {
-  position: absolute;
-  right: 16px;
-  bottom: 100px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 5;
-}
-
-.map-control-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  border: none;
-  cursor: pointer;
-  font-size: 20px;
-  color: #3B78E7;
-}
-
-/* 내 위치 버튼 추가 */
-.my-location-button {
-  position: absolute;
-  right: 16px;
-  bottom: 160px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  border: none;
-  cursor: pointer;
-  z-index: 5;
-  color: #3B78E7;
-}
-
-/* 모바일 최적화 */
-@media (max-width: 768px) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* 헤더 스타일 */
   .header {
-    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    border-bottom: 1px solid #eee;
   }
-
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .logo-image {
+    height: 30px;  /* 원하는 크기로 조절 */
+    width: auto;
+    object-fit: contain;
+  }
+  
+  .menu-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  /* 검색바 스타일 */
   .search-bar {
-    top: 10px;
-    width: calc(100% - 24px);
-    margin: 0 12px;
-    height: 42px; /* 높이 조정 */
+    position: fixed;
+    /* 반응형 디자인만 상단 여백이 있어 추가 */
+    top: 1vh;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    z-index: 1001;
+    background: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
     padding: 8px 12px;
+    height: 28px;
+    box-shadow: 0px 8px 4px -6px #666
   }
-
+  
   .search-input {
-    font-size: 15px;
+    flex: 1;
+    border: none;
+    background: none;
+    padding: 6px 0;
+    font-size: 16px;
+    background-color: white;
+    border-radius: 8px;
+  
   }
-
-  .search-icon,
-  .voice-icon,
-  .menu-icon {
-    width: 20px;
-    height: 20px;
+  
+  .search-input:focus {
+    outline: none;
   }
-
+  
+  /* 필터 버튼 스타일 */
   .filter-buttons-container {
-    top: 62px;
-    padding: 6px 12px;
+    /* search bar의 위치에 맞게 배치 */
+    position: absolute;
+    top: calc(44px + 1vh);
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    padding: 8px 16px;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-
+  
+  .filter-buttons-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .filter-buttons-scroll {
+    display: flex;
+    gap: 5px;
+    width: max-content;
+    padding: 0 8px 8px 0;
+    margin-right: 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    touch-action: pan-x;
+  }
+  
+  .filter-buttons-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .filter-buttons-scroll::after {
+    content: '';
+    display: block;
+    min-width: 20px;
+    height: 1px;
+  }
+  
   .filter-button {
-    padding: 8px 14px;
-    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 8px;
+    margin: 1px;
+    background: white;
+    border: none;
+    border-radius: 30px;
+    box-shadow: 0px 8px 6px -6px #666;
+    white-space: nowrap;
+    font-size: 14px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    -webkit-user-select: none;
+  
   }
   
-  .map-controls {
-    right: 12px;
-    bottom: 80px;
+  .filter-button-icon {
+    /* 불필요한 font-size 제거 */
+    background-color: white;
+    border-radius: 30px;
+    padding: 2px;
   }
   
-  .map-control-button {
-    width: 36px;
-    height: 36px;
-  }
-  
-  .my-location-button {
-    right: 12px;
-    bottom: 130px;
-    width: 36px;
-    height: 36px;
-  }
-}
-
-/* 작은 모바일 화면 대응 */
-@media (max-width: 380px) {
-  .search-bar {
-    top: 8px;
-    width: calc(100% - 16px);
-    margin: 0 8px;
-    height: 40px;
-  }
-
-  .filter-buttons-container {
-    top: 56px;
-    padding: 4px 8px;
-  }
-  
-  .filter-button {
-    padding: 6px 12px;
+  .filter-button-text {
     font-size: 12px;
   }
-}
-
-/* 추가: 모바일 Safari 대응 */
-@supports (-webkit-touch-callout: none) {
-  .map-container,
+  
+  /* 지도 컨테이너 */
   .map-component-container {
-    height: -webkit-fill-available;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
   }
   
+  /* NaverMap이 사용하는 실제 지도 컨테이너 */
   .map-component-container > div {
-    height: -webkit-fill-available !important;
+    width: 100% !important;
+    height: 100% !important;
+    touch-action: pan-x pan-y;
   }
-}
+  
+  /* 현재 위치 버튼 스타일 */
+  .move-to-current-button {
+    position: absolute;
+    right: 16px;
+    bottom: 86px;
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+    background: white;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 600;
+    cursor: pointer;
+    transition: bottom 0.3s ease-in-out;
+  }
+  
+  /* 정보 패널이 열려있을 때 현재 위치 버튼 위치 조정 */
+  .move-to-current-button.panel-open {
+    bottom: 350px; /* 정보 패널 높이에 따라 조정 - 더 높게 설정 */
+  }
+  
+  .move-to-current-button.active::before {
+    content: '';
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    border-radius: 28px;
+    background: rgba(0, 123, 255, 0.2);
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(0.95);
+      opacity: 0.7;
+    }
+    70% {
+      transform: scale(1.1);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+  }
+  
+  /* 카테고리 리스트 패널 */
+  .list-panel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    z-index: 1000;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    height: auto;
+    max-height: 35vh; /* 60vh에서 35vh로 변경 */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .list-panel-header {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .list-panel-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    align-items: center;
+  }
+  
+  .list-count {
+    margin-left: 8px;
+    font-weight: normal;
+    color: #666;
+  }
+  
+  .list-panel-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #999;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  
+  .list-panel-content {
+    overflow-y: auto;
+    max-height: calc(35vh - 60px); /* 60vh에서 35vh로 변경 */
+    padding: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .list-item {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .list-item-content {
+    flex: 1;
+  }
+  
+  /* 리스트 아이템 길찾기 버튼 스타일 */
+  .list-item-route-button {
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 6px 12px;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-weight: 500;
+    box-shadow: 0px 4px 6px -3px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  
+  .list-item-route-button:hover {
+    background-color: #5c96f5;
+    transform: translateY(-1px);
+    box-shadow: 0px 5px 8px -3px rgba(0, 0, 0, 0.3);
+  }
+  
+  .list-item-route-button:active {
+    background-color: #3367d6;
+    transform: translateY(0);
+    box-shadow: 0px 3px 5px -3px rgba(0, 0, 0, 0.3);
+  }
+  
+  .list-item-route-button svg {
+    margin-right: 0;
+    width: 14px;
+    height: 14px;
+  }
+  
+  .list-item-title {
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .list-item-distance {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: #1E90FF;
+  }
+  
+  .list-item-address {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: #666;
+  }
+  
+  /* 모바일 최적화 */
+  @media (max-width: 768px) {
+    .header {
+      padding: 8px 12px;
+    }
+  
+    .search-bar {
+      top: 10px;
+      width: calc(100% - 24px);
+      margin: 0 12px;
+      height: 40px;
+      padding: 6px 10px;
+    }
+  
+    .search-input {
+      font-size: 14px;
+      padding-left: 14px; /* 기존보다 더 오른쪽으로 */
+    }
+  
+    .search-icon,
+    .sent-icon,
+    .menu-icon {
+      width: 20px;
+      height: 20px;
+    }
+  
+    .filter-buttons-container {
+      top: 70px;
+      padding: 0 12px;
+    }
+  
+    .filter-button {
+      padding: 4px 10px;
+      font-size: 13px;
+      border: 2px solid white;
+      transition: all 0.2s ease;
+    }
 
-/* 다크 모드 스타일 추가 */
-@media (prefers-color-scheme: dark) {
-  .map-container {
-    background-color: #1a1a1a;
+    .filter-button.active {
+      border-color: #87CEFA;
+      color: #1E90FF;
+      font-weight: bold;
+    }
   }
   
-  .header {
-    background: #222;
-    border-bottom: 1px solid #333;
+  /* 작은 모바일 화면 대응 */
+  @media (max-width: 380px) {
+    .search-bar {
+      top: 10px;
+      width: calc(100% - 16px);
+      margin: 0 8px;
+      height: 38px;
+    }
+  
+    .filter-buttons-container {
+      top: 90px;
+      padding: 0 8px;
+    }
   }
   
-  .search-bar {
-    background: #222;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+  /* 추가: 모바일 Safari 대응 */
+  @supports (-webkit-touch-callout: none) {
+    .map-container,
+    .map-component-container {
+      height: -webkit-fill-available;
+    }
+    
+    .map-component-container > div {
+      height: -webkit-fill-available !important;
+    }
   }
   
-  .search-input {
-    color: #eee;
+  /* 반응형 디자인 */
+  @media (max-width: 768px) {
+    .search-bar {
+      top: 10px;
+      width: calc(100% - 24px);
+      margin: 0 12px;
+      height: 38px;
+      padding: 6px 10px;
+    }
   }
   
-  .search-input::placeholder {
-    color: #888;
+  @media (max-width: 480px) {
+    .search-bar {
+      top: 10px;
+      width: calc(100% - 16px);
+      margin: 0 8px;
+      height: 38px;
+    }
   }
   
-  .filter-buttons-container {
-    background-color: rgba(34, 34, 34, 0.85);
+  @media (max-width: 380px) {
+    .search-bar {
+      top: 10px;
+      width: calc(100% - 12px);
+      margin: 0 6px;
+      height: 36px;
+    }
+    /* 화면 width 375 미만에서 filter button이 멀어지는 현상 수정 */
+    .filter-buttons-container {
+      position: absolute;
+      top: calc(44px + 1vh + 10px);
+      left: 0;
+      right: 0;
+      z-index: 1001;
+      padding: 8px 16px;
+      width: 100%;
+    }
   }
   
-  .filter-button {
-    background: #333;
-    color: #ddd;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  @media (min-width: 770px) {
+    /* width 770 이상에서 텍스트 밀림 수정 */
+    .search-input {
+      padding-left: 14px;
+    }
+    /* width 770 이상에서 input과 너무 멀어짐 수정 */
+    .filter-buttons-container {
+      padding-left: 3vw;
+    }
+
+    .filter-button {
+      padding: 4px 10px;
+      font-size: 13px;
+      border: 2px solid white;
+      transition: all 0.2s ease;
+    }
+
+    .filter-button.active {
+      border-color: #87CEFA;
+      color: #1E90FF;
+      font-weight: bold;
+    }
   }
-  
-  .filter-button:hover, .filter-button.active {
-    background-color: #4B88F7;
-  }
-  
-  .map-control-button,
-  .my-location-button {
-    background: #333;
-    color: #4B88F7;
-  }
-}

@@ -54,4 +54,3 @@ const storeService = {
 };
 
 module.exports = storeService;
-

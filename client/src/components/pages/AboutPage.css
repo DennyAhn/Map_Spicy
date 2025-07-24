@@ -1,0 +1,55 @@
+.info-page {
+  width: 100%;
+  height: 100vh;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #fff;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* 뒤로가기 버튼 */
+.back-button-about {
+  background: none;
+  border: none;
+  color: #3498db;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.back-button-about:hover {
+  text-decoration: underline;
+}
+
+/* 타이틀 */
+.info-page h1 {
+  text-align: center;
+  color: #2c3e50;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* 섹션 제목 */
+.info-page h2 {
+  margin-top: 2rem;
+  color: #2c3e50;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+/* 기능 리스트 */
+.feature-list {
+  padding-left: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.feature-list li {
+  padding: 0.8rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  font-size: 1.05rem;
+  color: #34495e;
+}

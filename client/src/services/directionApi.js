@@ -1,6 +1,8 @@
 // src/services/directionApi.js
+import { API_BASE_URL } from '../config/api';
+
 export const directionRequest = async (start, goal) => {
-  const url = `http://localhost:3001/direction?start=${start}&goal=${goal}`;
+  const url = `${API_BASE_URL}/direction?start=${start}&goal=${goal}`;
   const response = await fetch(url, {
     method: "GET",
   });
