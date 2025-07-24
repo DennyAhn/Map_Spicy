@@ -1,0 +1,95 @@
+.settings-panel {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  transform: translateY(calc(100% - 40px));
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+.settings-panel.open {
+  transform: translateY(calc(100% - 210px));
+}
+
+.settings-panel.open.safe-mode {
+  transform: translateY(calc(100% - 280px));
+}
+
+.settings-panel.dragging {
+  transition: none;
+}
+
+.panel-header {
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.drag-handle {
+  width: 40px;
+  height: 4px;
+  background-color: #ddd;
+  border-radius: 2px;
+  margin: 0 auto;
+}
+
+.panel-title {
+  margin-left: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+.panel-content {
+  padding: 0 20px 20px 20px;
+  height: 100%;
+  overflow: hidden;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.settings-section {
+  margin-bottom: 15px;
+}
+
+.settings-section:last-child {
+  margin-bottom: 0;
+}
+
+/* 스크롤바 스타일링 */
+.panel-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.panel-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .settings-panel {
+    width: calc(100% - 40px);
+    left: 20px;
+    right: 20px;
+  }
+}

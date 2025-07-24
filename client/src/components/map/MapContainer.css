@@ -1,0 +1,379 @@
+.map-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #F8F8F0; /* 부드러운 배경색 추가 */
+}
+
+/* 헤더 스타일 개선 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: white;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08); /* 그림자 효과 추가 */
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-image {
+  height: 34px; /* 크기 약간 증가 */
+  width: auto;
+  object-fit: contain;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #3B78E7; /* 메뉴 버튼 색상 변경 */
+}
+
+/* 검색바 스타일 개선 */
+.search-bar {
+  position: fixed;
+  top: 10px; /* 위치 조정 */
+  left: 0;
+  right: 0;
+  width: calc(100% - 24px);
+  max-width: none;
+  margin: 0 12px;
+  z-index: 1001;
+  background: white;
+  border-radius: 8px; /* 라운드 처리 */
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15); /* 그림자 강화 */
+  display: flex;
+  align-items: center;
+  padding: 10px 16px; /* 패딩 증가 */
+  height: 46px; /* 높이 증가 */
+}
+
+.search-icon {
+  width: 22px;
+  height: 22px;
+  margin-right: 12px;
+  color: #3B78E7; /* 아이콘 색상 변경 */
+}
+
+.voice-icon {
+  width: 24px;
+  height: 24px;
+  margin-left: 12px;
+  cursor: pointer;
+  color: #3B78E7; /* 아이콘 색상 변경 */
+}
+
+.menu-icon {
+  width: 24px;
+  height: 24px;
+  margin-left: 12px;
+  cursor: pointer;
+  color: #7A7A7A; /* 아이콘 색상 변경 */
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 8px 0;
+  font-size: 16px;
+  color: #333; /* 텍스트 색상 변경 */
+}
+
+.search-input::placeholder {
+  color: #aaa; /* 플레이스홀더 색상 */
+}
+
+.search-input:focus {
+  outline: none;
+}
+
+/* 필터 버튼 스타일 개선 */
+.filter-buttons-container {
+  position: fixed;
+  top: 66px; /* 위치 조정 */
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  padding: 8px 16px;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  background-color: rgba(255, 255, 255, 0.85); /* 반투명 배경 */
+  backdrop-filter: blur(5px); /* 블러 효과 */
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.filter-buttons-container::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-buttons-scroll {
+  display: flex;
+  gap: 8px; /* 간격 증가 */
+  width: max-content;
+  padding: 0 8px 8px 0;
+  margin-right: 20px;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  touch-action: pan-x;
+}
+
+.filter-buttons-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-buttons-scroll::after {
+  content: '';
+  display: block;
+  min-width: 20px;
+  height: 1px;
+}
+
+.filter-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: white;
+  border: none; /* 테두리 제거 */
+  border-radius: 20px;
+  white-space: nowrap;
+  font-size: 14px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 그림자 추가 */
+  color: #555;
+}
+
+.filter-button:hover, .filter-button.active {
+  background-color: #3B78E7; /* 활성화 색상 */
+  color: white;
+}
+
+.filter-button-icon {
+  font-size: 16px;
+  color: inherit;
+}
+
+/* 지도 컨테이너 */
+.map-component-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+}
+
+/* NaverMap이 사용하는 실제 지도 컨테이너 */
+.map-component-container > div {
+  width: 100% !important;
+  height: 100% !important;
+  touch-action: pan-x pan-y;
+}
+
+/* 확대/축소 컨트롤 스타일 추가 */
+.map-controls {
+  position: absolute;
+  right: 16px;
+  bottom: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 5;
+}
+
+.map-control-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #3B78E7;
+}
+
+/* 내 위치 버튼 추가 */
+.my-location-button {
+  position: absolute;
+  right: 16px;
+  bottom: 160px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  border: none;
+  cursor: pointer;
+  z-index: 5;
+  color: #3B78E7;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+  .header {
+    padding: 8px 12px;
+  }
+
+  .search-bar {
+    top: 10px;
+    width: calc(100% - 24px);
+    margin: 0 12px;
+    height: 42px; /* 높이 조정 */
+    padding: 8px 12px;
+  }
+
+  .search-input {
+    font-size: 15px;
+  }
+
+  .search-icon,
+  .voice-icon,
+  .menu-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .filter-buttons-container {
+    top: 62px;
+    padding: 6px 12px;
+  }
+
+  .filter-button {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+  
+  .map-controls {
+    right: 12px;
+    bottom: 80px;
+  }
+  
+  .map-control-button {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .my-location-button {
+    right: 12px;
+    bottom: 130px;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* 작은 모바일 화면 대응 */
+@media (max-width: 380px) {
+  .search-bar {
+    top: 8px;
+    width: calc(100% - 16px);
+    margin: 0 8px;
+    height: 40px;
+  }
+
+  .filter-buttons-container {
+    top: 56px;
+    padding: 4px 8px;
+  }
+  
+  .filter-button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+/* 추가: 모바일 Safari 대응 */
+@supports (-webkit-touch-callout: none) {
+  .map-container,
+  .map-component-container {
+    height: -webkit-fill-available;
+  }
+  
+  .map-component-container > div {
+    height: -webkit-fill-available !important;
+  }
+}
+
+/* 다크 모드 스타일 추가 */
+@media (prefers-color-scheme: dark) {
+  .map-container {
+    background-color: #1a1a1a;
+  }
+  
+  .header {
+    background: #222;
+    border-bottom: 1px solid #333;
+  }
+  
+  .search-bar {
+    background: #222;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+  }
+  
+  .search-input {
+    color: #eee;
+  }
+  
+  .search-input::placeholder {
+    color: #888;
+  }
+  
+  .filter-buttons-container {
+    background-color: rgba(34, 34, 34, 0.85);
+  }
+  
+  .filter-button {
+    background: #333;
+    color: #ddd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  
+  .filter-button:hover, .filter-button.active {
+    background-color: #4B88F7;
+  }
+  
+  .map-control-button,
+  .my-location-button {
+    background: #333;
+    color: #4B88F7;
+  }
+}
