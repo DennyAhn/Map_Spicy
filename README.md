@@ -15,19 +15,9 @@
 ### 실제 서비스 URL
 - **메인 서비스**: https://map-cap-client.vercel.app/
 - **관리자 대시보드**: https://my-admin-app-rho.vercel.app
-- **API 문서**: [https://api.mapspicy.com/docs](https://api.mapspicy.com/docs)
+- **API 문서**: [API.md](API.md)
 
 
-## 📚 문서 바로가기
-
-| 구분 | 문서 |
-| ---- | ---- |
-| API 명세 | [API.md](API.md) |
-| 배포 가이드 | docker-compose.simple.yml |
-| 프런트엔드 가이드 | [frontend.md](frontend.md) |
-| 백엔드 가이드 | [backend.md](backend.md) |
-
----
 
 > **2025 Capstone Design Project**  
 ## 🎯 프로젝트 개요
