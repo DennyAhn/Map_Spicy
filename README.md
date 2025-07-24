@@ -212,7 +212,7 @@ POST /api/reports
 ### 개발팀 구성
 
 **🎯 Project Manager & Backend Developer (PM)**
-Name: 안 현 진 (Hyunjin Ahn)
+</br>Name: 안 현 진 (Hyunjin Ahn)
 - 프로젝트 전체 기획 및 일정 관리
 - 요구사항 분석 및 기능 명세 작성
 - 안전 가중치 알고리즘 설계 및 구현
