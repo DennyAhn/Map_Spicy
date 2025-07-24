@@ -23,7 +23,7 @@
 | 구분 | 문서 |
 | ---- | ---- |
 | API 명세 | [API.md](API.md) |
-| 배포 가이드 | [DEPLOYMENT.md](DEPLOYMENT.md) |
+| 배포 가이드 | docker-compose.simple.yml |
 | 프런트엔드 가이드 | [frontend.md](frontend.md) |
 | 백엔드 가이드 | [backend.md](backend.md) |
 
